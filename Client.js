@@ -1,7 +1,12 @@
-var largeur;
-var longueur;
+console.log("Fichier Client.js reçu")
 
+var largeur=13;
+var longueur=13;
 
+//Test qui génère un tableau de jeu rapide, à enlever plus tard lorsuqu'on aura externalisé ça
+var game = []
+for (i=0;i<longueur*largeur;i++){if (Math.random()*100<10){game.push("eau");}
+else{game.push("plaine");}}
 
 
 //-------------------Création Hexagone sous forme de tableau de points----------------------------------------
@@ -16,10 +21,6 @@ function creerHexagone(rayon){
     return points;
 }
 //------------Création d'un damier selon les paramètres entrés dans le SVG d'identifiant "jeu"---------------------------
-
-
-
-
 function créerDamier(nbLines,nbColumns,rayon){
     Hexagone = creerHexagone(rayon);
 for (var l = 0; l < nbLines; l++) {
@@ -55,3 +56,24 @@ for (var l = 0; l < nbLines; l++) {
     }
 }
 }
+//Coloriage d'un hexagone
+function fill(id,couleur){
+    d3.select(("#h"+id)).attr("fill", couleur);
+}
+//Coloriage du damier
+
+function actualiserDamier(longueur,largeur,jeu){
+for (i=0;i<longueur*largeur;i++){
+    var color="aliceblue";
+if (jeu[i]=="eau"){color="blue";}
+if (jeu[i]=="rocher"){color="brown"}
+if (jeu[i]=="plaine"){color="lightgreen"}
+fill(i,color)
+}
+}
+
+//-------------Initialisation du damier lors de la connection---------------------------------------------------------------
+window.addEventListener("load", (event) => {
+    créerDamier(longueur,largeur,20)
+    actualiserDamier(longueur,largeur,game);
+  });
