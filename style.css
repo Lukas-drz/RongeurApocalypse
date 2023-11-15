@@ -1,0 +1,35 @@
+body{
+    background-color: paleturquoise;
+}
+
+#pannel{
+    display: flex;
+    height : 150px;
+    background-color: greenyellow;
+    border: solid darkgreen 3px;
+    z-index: 3;
+}
+.tiers{
+    flex:1;
+    border: solid darkgreen 3px;
+    height: 100%;
+    width: 33%;}
+
+#jeu{
+    margin-left: 25%;
+    z-index: 3;
+    margin-top:4%;
+
+}
+
+input{
+    background-color: aliceblue;
+    border:darkgreen solid;
+}
+
+#background{
+    z-index:-1;
+    width: 100%;
+    position:fixed;
+    top:0
+}
