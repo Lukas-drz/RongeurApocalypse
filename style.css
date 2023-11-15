@@ -8,12 +8,28 @@ body{
     background-color: greenyellow;
     border: solid darkgreen 3px;
     z-index: 3;
+    margin-left: 0;
+    width:100%
 }
 .tiers{
     flex:1;
     border: solid darkgreen 3px;
-    height: 100%;
-    width: 33%;}
+    height: 100%;}
+
+    .pannelText{
+        text-align: center;
+        color:darkgreen;
+        font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+      padding: 5px;
+      margin: 0 auto;
+      height: 0.9cm;
+      display: block;
+   
+    }
+#systeme{
+    color:crimson;
+}
+
 
 #jeu{
     margin-left: 25%;
@@ -25,6 +41,10 @@ body{
 input{
     background-color: aliceblue;
     border:darkgreen solid;
+}
+
+#gameRow{
+    margin-left:0;
 }
 
 #background{

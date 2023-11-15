@@ -22,7 +22,26 @@ app.get('/fichier/:nomFichier', function(request, response) {
   console.log("renvoi de "+request.params.nomFichier);
   response.sendFile(request.params.nomFichier, {root: __dirname});
 });
+//-------------------------------Variables------------------------------------------
+var joueurs = [];
+var terrain = [];
+var largeur=13;
+var longueur=13;
+var game = []
+//Création de la partie
+function initGame(){
+  for (i=0;i<longueur*largeur;i++){proba = Math.random()*100;
+    if (proba<15){terrain.push("eau");}
+    else{if (proba>65){terrain.push("plaine");}else{if (proba>55){terrain.push("montagne");}else{terrain.push("rocher");}}}}
+    console.log("terrain généré")
+    for (i=0;i<longueur*largeur;i++){game.push(0);}
+    console.log("Jeu vidé");}
+
+    initGame()
 
 //-------------------------------Sockets-------------------------------------------
+io.on('connection', (socket) => {
+  socket.on('Join',data=>{})
 
+});
 //-------------------------------Connection----------------------------------------

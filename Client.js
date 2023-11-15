@@ -1,12 +1,14 @@
 console.log("Fichier Client.js reçu")
+var socket = io();
+
+var informationsJoueur;
+var host = false;
 
 var largeur=13;
 var longueur=13;
 
 //Test qui génère un tableau de jeu rapide, à enlever plus tard lorsuqu'on aura externalisé ça
 var game = []
-for (i=0;i<longueur*largeur;i++){if (Math.random()*100<15){game.push("eau");}
-else{if (Math.random()*100>65){game.push("plaine");}else{game.push("rocher");}}}
 
 
 //-------------------Création Hexagone sous forme de tableau de points----------------------------------------
@@ -66,14 +68,48 @@ function actualiserDamier(longueur,largeur,jeu){
 for (i=0;i<longueur*largeur;i++){
     var color="aliceblue";
 if (jeu[i]=="eau"){color="blue";}
-if (jeu[i]=="rocher"){color="gray"}
+if (jeu[i]=="rocher"){color="darkgray"}
+if (jeu[i]=="montagne"){color="brown"}
 if (jeu[i]=="plaine"){color="lightgreen"}
 fill(i,color)
 }
 }
 
+  //Affichage message système
+  function messageSysteme(message){
+    document.getElementById("systeme").innerText = message;
+  }
+  
 //-------------Initialisation du damier lors de la connection---------------------------------------------------------------
 window.addEventListener("load", (event) => {
     créerDamier(longueur,largeur,20)
     actualiserDamier(longueur,largeur,game);
+    messageSysteme("ez mathox");
   });
+
+//-------------Connection---------------------------------------------------------------------------------------------------
+function connection(){
+    pseudo = document.getElementById("pseudo").value;
+    force = document.getElementById("force").value;
+    
+    perception = document.getElementById("perception").value;
+    tauxrepro = document.getElementById("tauxrepro").value
+    if(force<1||force>5||perception<1||perception>5||tauxrepro<1||tauxrepro>5){messageSysteme("Les statistiques doivent être comprises entre 1 et 5 (inclus)");return;}
+    if (pseudo==""){messageSysteme("Le pseudonyme ne peut pas être nul");return;}
+
+    if (host==true){
+    nbjoueurs = document.getElementById("nbJoueurs");
+    nbjoueurs = document.getElementById("nbTours")
+    if (nbjoueurs==null){nbjoueurs=2}
+    if (nbTours==null){nbjoueurs=15}}
+
+    socket.emit("Join",{"pseudo":pseudo,"force":force,"perception":perception,"nbTours":nbTours,"nbJoueurs":nbjoueurs})
+
+}
+
+
+
+
+
+
+
