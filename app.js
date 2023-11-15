@@ -40,8 +40,12 @@ function initGame(){
     initGame()
 
 //-------------------------------Sockets-------------------------------------------
+var haveHost = false;
 io.on('connection', (socket) => {
-  socket.on('Join',data=>{})
+  socket.on('load',data=>{socket.emit('loaded',!haveHost)})
+  socket.on('Join',data=>{
+    console.log(data);
+  })
 
 });
 //-------------------------------Connection----------------------------------------

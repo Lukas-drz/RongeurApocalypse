@@ -74,17 +74,19 @@ if (jeu[i]=="plaine"){color="lightgreen"}
 fill(i,color)
 }
 }
+//Actualisation des valeurs du damier
+function remplirDamier(longueur,largeur,jeu){
+    
+}
 
   //Affichage message système
   function messageSysteme(message){
     document.getElementById("systeme").innerText = message;
   }
   
-//-------------Initialisation du damier lors de la connection---------------------------------------------------------------
+//-------------Initialisation de l'hôte---------------------------------------------------------------
 window.addEventListener("load", (event) => {
-    créerDamier(longueur,largeur,20)
-    actualiserDamier(longueur,largeur,game);
-    messageSysteme("ez mathox");
+    socket.emit("load");
   });
 
 //-------------Connection---------------------------------------------------------------------------------------------------
@@ -107,6 +109,18 @@ function connection(){
 
 }
 
+socket.on('joined',data=>{
+    if (data=='complet'){messageSysteme("La partie est complète");return;}
+    if (data=='pseudopris'){messageSysteme("Ce pseudonyme est déjà utilisé");return;}
+
+    players = data.players;
+    terrain = data.terrain;
+    game = data.game;
+    créerDamier(longueur,largeur,20)
+    actualiserDamier(longueur,largeur,terrain);
+    remplirDamier(longueur,largeur,game);
+    messageSysteme("ez mathox");
+})
 
 
 
