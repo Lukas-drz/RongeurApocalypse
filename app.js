@@ -5,6 +5,10 @@ const { isNumberObject } = require('util/types');
 const server = http.createServer(app);
 const io = new require("socket.io")(server);
 
+import { Male, Female } from './Créature.js'
+import { Joueur } from './Joueur.js'
+
+
 app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 8888;
@@ -35,9 +39,16 @@ function initGame(){
     else{if (proba>65){terrain.push("plaine");}else{if (proba>55){terrain.push("montagne");}else{terrain.push("rocher");}}}}
     console.log("terrain généré")
     for (i=0;i<longueur*largeur;i++){game.push(0);}
-    console.log("Jeu vidé");}
+    console.log("Jeu vidé");
+  }
 
     initGame()
+    // Example des classes
+    let joueur1 = new Joueur(true);
+    male = Male(1,1,1,1);
+    female = Female(1,1,1,1);
+    joueur1.parametrerCreature(male, 'male');
+    joueur1.parametrerCreature(femelle, 'female')
 
 //-------------------------------Sockets-------------------------------------------
 var haveHost = false;

@@ -11,3 +11,15 @@ class Creature {
     this.position = position;
   }
 }
+
+export class Female extends Creature {
+  constructor(reproductionRate, perception, strength, position) {
+    super(reproductionRate, perception, strength, 'female', position);
+  }
+}
+
+export class Male extends Creature{
+  constructor(reproductionRate, perception, strength, position) {
+    super(reproductionRate, perception, strength, 'male', position);
+  }
+}

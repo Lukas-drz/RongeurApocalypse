@@ -1,4 +1,6 @@
-class Joueur {
+import { Male, Femelle } from './Créature.js'
+
+export class Joueur {
   constructor(isHost) {
     this.isHost = isHost;
     this.creatures = {
@@ -7,7 +9,7 @@ class Joueur {
     };
   }
 
-  parametrerCreature(creature, gender) {
+  parametrerCreature(creature) {
     if (gender === 'male') {
       this.creatures.male = creature;
     } else if (gender === 'female') {
