@@ -1,4 +1,5 @@
 class Creature {
+  // ajouter reproduction
   constructor(reproductionRate, perception, strength, gender, position) {
     // Chaque joueur doit distribuer 9 points sur trois axes valués de 1 à 5 :
       if (reproductionRate <= 1 || perception <= 1 || strength <= 1 || reproductionRate >= 5 || perception >= 5 || strength >= 5 || reproductionRate + perception + strength != 9) {
@@ -9,7 +10,39 @@ class Creature {
     this.strength = strength;
     this.gender = gender; 
     this.position = position;
-    // ajouter taux d’hydratation et de satiété valués de 0 à 10.
+    this.hydration = 10;
+    this.satiety = 10;
+    this.dateOfBirth = new Date();
+    this.dateOfDeath = null;
+  }
+  addWater(){
+    this.hydration += 3;
+    if (this.hydration > 10){
+      this.hydration = 10;
+    }
+  }
+  addPrarie(){
+    this.satiety += 2;
+    if (this.satiety > 10){
+      this.satiety = 10;
+    }
+  }
+  coutDeplacement(){
+    this.hydration -= 1;
+    this.satiety -= 0.5;
+  }
+  coutArret(){
+    this.hydration -= 0.5;
+    this.satiety -= 0.25;
+  }
+  isCreatureDead() {
+    if (this.hydration <= 0 || this.satiety <= 0){
+      this.dateOfDeath = new Date();
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 }
 

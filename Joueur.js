@@ -1,4 +1,4 @@
-import { Male, Femelle } from './Créature.js'
+// import { Male, Femelle } from './Créature.js'
 
 export class Joueur {
   constructor(isHost) {
@@ -14,6 +14,13 @@ export class Joueur {
       this.creatures.male = creature;
     } else if (gender === 'female') {
       this.creatures.female = creature;
+    } else {
+      throw new Error("Le genre doit être 'male' ou 'female'");
+    }
+  }
+  ajouterEnfant(gender, childCreature) {
+    if (gender === 'male' || gender === 'female') {
+      this.creatures.children.push({ gender, creature: childCreature });
     } else {
       throw new Error("Le genre doit être 'male' ou 'female'");
     }
