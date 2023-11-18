@@ -45,8 +45,8 @@ function initGame(){
     initGame()
     // Example des classes
     let joueur1 = new Joueur(true);
-    male = Male(1,1,1,1);
-    female = Female(1,1,1,1);
+    male = Male(5,2,2, 'male', 1);
+    female = Female(3,4,2,'female', 2);
     joueur1.parametrerCreature(male, 'male');
     joueur1.parametrerCreature(femelle, 'female')
 
