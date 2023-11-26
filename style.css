@@ -47,6 +47,12 @@ input{
     margin-left:0;
 }
 
+.playButton{
+    width: 30%;
+    margin-left: 35%;
+    margin-top:5%;
+}
+
 #background{
     z-index:-1;
     width: 100%;

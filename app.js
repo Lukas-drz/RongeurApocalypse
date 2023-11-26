@@ -57,6 +57,7 @@ io.on('connection', (socket) => {
   socket.on('load',data=>{socket.emit('loaded',!haveHost);haveHost=true;})
   socket.on('Join',data=>{
     console.log(data);
+    
   })
 
 });

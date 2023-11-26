@@ -104,10 +104,11 @@ window.addEventListener("load", (event) => {
 function connection(){
     pseudo = document.getElementById("pseudo").value;
     force = document.getElementById("force").value;
-    
     perception = document.getElementById("perception").value;
     tauxrepro = document.getElementById("tauxrepro").value
+    
     if(force<1||force>5||perception<1||perception>5||tauxrepro<1||tauxrepro>5){messageSysteme("Les statistiques doivent être comprises entre 1 et 5 (inclus)");return;}
+    if (force+perception+tauxrepro>9){messageSysteme("Le total des statistiques doit <=9");return;}
     if (pseudo==""){messageSysteme("Le pseudonyme ne peut pas être nul");return;}
 
     if (host==true){
@@ -130,7 +131,6 @@ socket.on('joined',data=>{
     créerDamier(longueur,largeur,20)
     actualiserDamier(longueur,largeur,terrain);
     remplirDamier(longueur,largeur,game);
-    messageSysteme("ez mathox");
 })
 
 
