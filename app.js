@@ -28,12 +28,15 @@ app.get('/fichier/:nomFichier', function(request, response) {
 });
 //-------------------------------Variables------------------------------------------
 var joueurs = [];
-var terrain = [];
+var terrain;
 var largeur=13;
 var longueur=13;
-var game = []
+var game = [];
+var nbTours;
+var nbJoueurs;
 //Création de la partie
 function initGame(){
+  terrain = [];
   for (i=0;i<longueur*largeur;i++){proba = Math.random()*100;
     if (proba<15){terrain.push("eau");}
     else{if (proba>65){terrain.push("plaine");}else{if (proba>55){terrain.push("montagne");}else{terrain.push("rocher");}}}}
@@ -41,8 +44,6 @@ function initGame(){
     for (i=0;i<longueur*largeur;i++){game.push(0);}
     console.log("Jeu vidé");
   }
-
-    initGame()
     // Example des classes
 
 /*    let joueur1 = new Joueur(true);
@@ -54,13 +55,25 @@ function initGame(){
 //-------------------------------Sockets-------------------------------------------
 var haveHost = false;
 io.on('connection', (socket) => {
-  socket.on('load',data=>{socket.emit('loaded',!haveHost);haveHost=true;})
-  socket.on('Join',data=>{
-    console.log(data);
-    
-  })
+  socket.on('load',data=>{socket.emit('loaded',!haveHost);haveHost=true;console.log("nouveau chargement de la page");})
 
-});
+  socket.on('join',data=>{
+    console.log("Nouvelle connection:" +data.pseudo+"\nhote: "+data.host);
+    if (joueurs.length>=nbJoueurs){
+      socket.emit("joined","complet");return;
+    }
+    for (player of joueurs){if (player.pseudo==data.pseudo){
+      console.log("pseudonyme pris");
+      socket.emit("joined","pseudopris");return;
+    }};
+      
+    joueurs.push({"pseudo":data.pseudo,"force":data.force,"perception":data.perception,"tauxrepro":data.tauxrepro,"host:":data.host})
+    if (terrain==null){initGame();}
+    socket.emit("joined",{"players":joueurs,"terrain":terrain,"jeu":game})
+    console.log("Joueurs:\n"+joueurs);
+  });
+  });
+
 
 
 
