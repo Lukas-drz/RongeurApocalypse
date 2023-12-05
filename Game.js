@@ -1,11 +1,12 @@
 class Game {
     constructor(host) {
         this.host = host;
-        this.joueurs = [];
-        this.nbjoueurs = 0;
-        this.joueursConnectes = 0;
+        this.joueurs = [host];
+        this.nbJoueurs = 1;
+        this.joueursConnectes = 1;
         this.nbtours = 0;
         this.tourActuel = 0;
+        this.board = [];
     }
     addJoueur(joueur) {
         this.joueurs.push(joueur);
@@ -15,8 +16,8 @@ class Game {
         this.joueurs.splice(this.joueurs.indexOf(joueur), 1);
         this.joueursConnectes--;
     }
-    setNbJoueurs(nbjoueurs) {
-        this.nbjoueurs = nbjoueurs;
+    setNbJoueurs(nbJoueurs) {
+        this.nbJoueurs = nbJoueurs;
     }
     setTours(nbtours) {
         this.nbtours = nbtours;
