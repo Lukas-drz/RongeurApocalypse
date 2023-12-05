@@ -73,7 +73,7 @@ io.on('connection', (socket) => {
     console.log("Joueurs:\n"+game.joueurs);
   });
   });
-
+// test
 
 
 
