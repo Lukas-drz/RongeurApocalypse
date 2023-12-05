@@ -1,4 +1,4 @@
-export class Game {
+class Game {
     constructor(host) {
         this.host = host;
         this.joueurs = [];
@@ -25,3 +25,4 @@ export class Game {
         return this.nbtours == this.tourActuel;
     }
 }
+module.exports = { Game };

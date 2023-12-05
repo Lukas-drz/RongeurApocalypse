@@ -5,8 +5,8 @@ const { isNumberObject } = require('util/types');
 const server = http.createServer(app);
 const io = new require("socket.io")(server);
 
-/*import { Male, Female } from './Créature.js'
-import { Joueur } from './Joueur.js'*/
+const { Male, Female } = require('./Créature.js');
+const { Joueur } = require('./Joueur.js');
 
 
 app.use(express.static(__dirname));
@@ -46,11 +46,12 @@ function initGame(){
   }
     // Example des classes
 
-/*    let joueur1 = new Joueur(true);
-    male = Male(5,2,2, 'male', 1);
-    female = Female(3,4,2,'female', 2);
+    let joueur1 = new Joueur(true);
+    male = new Male(3,3,3, 'male', 1);
+    female = new Female(3,3,3,'female', 2);
     joueur1.parametrerCreature(male, 'male');
-    joueur1.parametrerCreature(femelle, 'female')*/
+    joueur1.parametrerCreature(female, 'female');
+    console.log(joueur1);
 
 //-------------------------------Sockets-------------------------------------------
 var haveHost = false;

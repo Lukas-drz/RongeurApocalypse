@@ -1,6 +1,6 @@
 // import { Male, Femelle } from './Créature.js'
 
-export class Joueur {
+class Joueur {
   constructor(isHost) {
     this.isHost = isHost;
     this.creatures = {
@@ -10,9 +10,9 @@ export class Joueur {
   }
 
   parametrerCreature(creature) {
-    if (gender === 'male') {
+    if (creature.gender === 'male') {
       this.creatures.male = creature;
-    } else if (gender === 'female') {
+    } else if (creature.gender === 'female') {
       this.creatures.female = creature;
     } else {
       throw new Error("Le genre doit être 'male' ou 'female'");
@@ -26,3 +26,4 @@ export class Joueur {
     }
   }
 }
+module.exports = { Joueur };
