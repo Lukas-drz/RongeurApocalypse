@@ -49,8 +49,9 @@ input{
 
 .playButton{
     width: 30%;
+
     margin-left: 30%;
-    margin-top:5%;
+    margin-top:10%;
     border: none;
     appearance: none;
     background-color: inherit;

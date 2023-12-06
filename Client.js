@@ -9,6 +9,9 @@ var longueur=13;
 var localPlayer;
 //Test qui génère un tableau de jeu rapide, à enlever plus tard lorsuqu'on aura externalisé ça
 var jeu;
+var largeurHexagones = 27;
+var boardDétaillé
+
 
 
 //-------------------Création Hexagone sous forme de tableau de points----------------------------------------
@@ -24,6 +27,7 @@ function creerHexagone(rayon) {
 }
 
 function créerDamier(nbLines, nbColumns, rayon) {
+    document.getElementById("jeu").innerHTML = "";
     Hexagone = creerHexagone(rayon);
 
     for (var l = 0; l < nbLines; l++) {
@@ -83,41 +87,43 @@ if (jeu[i]=="eau"){color="blue";}
 if (jeu[i]=="rocher"){color="darkgray"}
 if (jeu[i]=="montagne"){color="brown"}
 if (jeu[i]=="plaine"){color="lightgreen"}
+if (jeu[i]=="1"){color="aliceblue"}
+if (jeu[i]=="2"){color="red"}
+if (jeu[i]=="3"){color="purple"}
+if (jeu[i]=="4"){color="pink"}
+
 fill(i,color)
 }
 }
+
 
 //Actualisation des valeurs du damier
 function remplirDamier(longueur,largeur,jeu,rayon){
     
     
-        // Assuming you have an image URL, replace "IMAGE_URL" with the actual URL
-        var imageUrl = "https://images.emojiterra.com/twitter/512px/1f913.png";
-    
-        // Select the container with ID "jeu"
-        var jeuContainer = d3.select("#jeu");
+        var imageUrl = "http://localhost:8888/fichier/player3.png";
+        var svgJeu = d3.select("#jeu");
+    var svgJeu = d3.select("#jeu");
+        svgJeu.selectAll(".hexagon-image").remove();
+
+    for (i in jeu){
+        imageUrl = "http://localhost:8888/fichier/player"+i+".png";
         
-    // Select the container with ID "jeu"
-    var jeuContainer = d3.select("#jeu");
-
-    // Remove any existing images on the board
-    jeuContainer.selectAll(".hexagon-image").remove();
-
-
-    jeu.forEach(function (hexagonPosition) {
-        var hexagonElement = d3.select("#h" + hexagonPosition);
+        for (creature of jeu[i]){
+        position = creature.position;
+        var hexagonElement = d3.select("#h" + position);
         var boundingBox = hexagonElement.node().getBBox();
         var centreX = boundingBox.x + boundingBox.width / 2;
         var centreY = boundingBox.y + boundingBox.height / 2;
-        jeuContainer.append("image")
+        svgJeu.append("image")
             .attr("xlink:href", imageUrl)
             .attr("x", centreX-(rayon*1.4)/2) 
             .attr("y", centreY-(rayon*1.4)/2) 
             .attr("width", rayon*1.4) 
             .attr("height", rayon*1.4) 
             .attr("class", "hexagon-image"); 
-    });
-    
+        }
+    }
 
 }
 
@@ -149,19 +155,22 @@ function connection(){
     perception = parseInt(document.getElementById("perception").value);
     tauxrepro = parseInt(document.getElementById("tauxrepro").value);
     total = force+perception+tauxrepro;
+    if (isNaN(force)||isNaN(tauxrepro)||isNaN(perception)){messageSysteme("Les statistiques doivent être des entiers");return;}
     if(force<1||force>5||perception<1||perception>5||tauxrepro<1||tauxrepro>5){messageSysteme("Les statistiques doivent être comprises entre 1 et 5 (inclus)");return;}
     if (total>9){messageSysteme("Le total des statistiques doit être <=9");console.log("Total stats actuel: "+total);return;}
-    if (pseudo==""){messageSysteme("Le pseudonyme ne peut pas être nul");return;}
+    if (pseudo==""||pseudo==null){messageSysteme("Le pseudonyme ne peut pas être nul");return;}
 
     var nbjoueurs;
     var nbTours;
-    if (host==true){
-    nbjoueurs = document.getElementById("nbJoueurs");
-    nbjoueurs = document.getElementById("nbTours")
-    if (nbjoueurs==null){nbjoueurs=2}
-    if (nbTours==null){nbTours=15}}
+    nbjoueurs = parseInt(document.getElementById("nbJoueurs").value);
+    if (nbjoueurs>4){messageSysteme("Ce jeu n'accepte pas plus de 4 joueurs");return;}
+    nbTours = parseInt(document.getElementById("nbTours").value)
+    if (nbjoueurs==null||isNaN(nbjoueurs)){nbjoueurs=2}
+    if (nbTours==null||isNaN(nbTours)){nbTours=15}
+
     messageSysteme("Connection en cours.")
-    console.log("connection");
+    console.log(nbTours);
+    console.log(nbjoueurs)
     socket.emit('join',{"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host,"nbTours":nbTours,"nbJoueurs":nbjoueurs})
         localPlayer = {"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host}; 
 }
@@ -174,18 +183,18 @@ socket.on('joined',data=>{
     document.getElementById("playButton").remove();
     players = data.players;
     terrain = data.terrain;
-    jeu = data.game;
-
-    jeu = [4,12];
-
-    créerDamier(longueur,largeur,27)
+    jeu = data.jeu;
+    boardDétaillé = data.jeucomplet
+    créerDamier(longueur,largeur,largeurHexagones)
     actualiserDamier(longueur,largeur,terrain);
-    remplirDamier(longueur,largeur,jeu,27);
-    messageSysteme("Damier créé");
+    remplirDamier(longueur,largeur,jeu,largeurHexagones);
+    messageSysteme("Connecté à la partie en tant que "+localPlayer.pseudo);
 })
 
-
-
+window.addEventListener("beforeunload", (event) => {
+    socket.emit("unload",host);
+  });
+  
 
 
 
