@@ -109,8 +109,7 @@ function remplirDamier(longueur,largeur,jeu,rayon){
     for (i in jeu){
         imageUrl = "http://localhost:8888/fichier/player"+i+".png";
         
-        for (creature of jeu[i]){
-        position = creature.position;
+        for (position of jeu[i]){
         var hexagonElement = d3.select("#h" + position);
         var boundingBox = hexagonElement.node().getBBox();
         var centreX = boundingBox.x + boundingBox.width / 2;
@@ -183,9 +182,9 @@ socket.on('joined',data=>{
     document.getElementById("playButton").remove();
 
     players = data.players;
-    terrain = data.terrain;
-    jeu = data.jeu;
     jeuDétaillé = data.jeucomplet
+    terrain = jeuDétaillé.terrain;
+    jeu = data.jeu;
     créerDamier(longueur,largeur,largeurHexagones)
     actualiserDamier(longueur,largeur,terrain);
     remplirDamier(longueur,largeur,jeu,largeurHexagones);

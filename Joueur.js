@@ -7,7 +7,10 @@ class Joueur {
     this.creatures = [];
   }
 
- /* parametrerCreature(creature) {
+  addCreature(creature){this.creatures.push(creature)}
+
+ /* ) discuter, potentiellement pas utile.
+ parametrerCreature(creature) {
     if (creature.gender === 'male') {
       this.creatures.male = creature;
     } else if (creature.gender === 'female') {

@@ -7,6 +7,7 @@ class Game {
         this.nbtours = 0;
         this.tourActuel = 0;
         this.board = [];
+        this.terrain = [];
     }
     addJoueur(joueur) {
         this.joueurs.push(joueur);
