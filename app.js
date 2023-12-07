@@ -95,12 +95,12 @@ io.on('connection', (socket) => {
 
     //Création du joueur-----
     joueur=new Joueur(false,data.pseudo)
-    let male = new Creature(data.tauxrepro,data.perception,data.force,"male",positionTanieres[game.joueurConnectes])
-    let femelle = new Creature(data.tauxrepro,data.perception,data.force,"female",positionTanieres[game.joueurConnectes])
+    let male = new Creature(data.tauxrepro,data.perception,data.force,"male",positionTanieres[game.joueursConnectes])
+    let femelle = new Creature(data.tauxrepro,data.perception,data.force,"female",positionTanieres[game.joueursConnectes])
     joueur.addCreature(male)
     joueur.addCreature(femelle)
-    game.board[positionTanieres[game.joueurConnectes]].push(male)
-    game.board[positionTanieres[game.joueurConnectes]].push(femelle)  
+    game.board[positionTanieres[game.joueursConnectes]].push(male)
+    game.board[positionTanieres[game.joueursConnectes]].push(femelle)  
     game.addJoueur(joueur)
 
   }
