@@ -27,7 +27,7 @@ app.get('/fichier/:nomFichier', function(request, response) {
   // console.log("renvoi de "+request.params.nomFichier);
   response.sendFile(request.params.nomFichier, {root: __dirname});
 });
-//-------------------------------Variables------------------------------------------
+//-------------------------------Fonctions------------------------------------------
 function initGame(firstPlayer,nbJoueurs){
 game = new Game(firstPlayer);
 game.setNbJoueurs(nbJoueurs);
@@ -53,14 +53,18 @@ console.log(positionTanieres)
     console.log("Jeu vidé");
   }
 
-  // Example des classes
-  /*var joueur1 = new Joueur(true);
-    var male1 = new Male(3,3,3, 'male', 1);
-    var female1 = new Female(3,3,3,'female', 2);
-    joueur1.parametrerCreature(male1, 'male');
-    joueur1.parametrerCreature(female1, 'female');
-    console.log(joueur1);*/
 
+  function actualisation(){
+  var jeusimplifié = [];
+  for (i in game.joueurs){
+  jeusimplifié[i] = [];
+  for(creature of game.joueurs[i].creatures){
+    jeusimplifié[i].push(creature.position);
+  }
+  }
+
+    io.emit("actualisation",{"players":game.joueurs,"jeu":jeusimplifié,"jeucomplet":game})
+ }
 //-------------------------------Sockets-------------------------------------------
 var haveHost = false;
 io.on('connection', (socket) => {
@@ -102,7 +106,7 @@ io.on('connection', (socket) => {
     game.board[positionTanieres[game.joueursConnectes]].push(male)
     game.board[positionTanieres[game.joueursConnectes]].push(femelle)  
     game.addJoueur(joueur)
-
+actualisation();
   }
 
   //Le damier utilisé pour l'actuaisation côté client est calculé via les joueurs

@@ -198,5 +198,13 @@ window.addEventListener("beforeunload", (event) => {
   });
   
 
-
+socket.on("actualisation",data=>{
+    players = data.players;
+    jeuDétaillé = data.jeucomplet
+    terrain = jeuDétaillé.terrain;
+    jeu = data.jeu;
+    créerDamier(longueur,largeur,largeurHexagones)
+    actualiserDamier(longueur,largeur,terrain);
+    remplirDamier(longueur,largeur,jeu,largeurHexagones);
+})
 
