@@ -10,7 +10,7 @@ var localPlayer;
 //Test qui génère un tableau de jeu rapide, à enlever plus tard lorsuqu'on aura externalisé ça
 var jeu;
 var largeurHexagones = 27;
-var boardDétaillé
+var jeuDétaillé
 
 
 
@@ -162,11 +162,11 @@ function connection(){
 
     var nbjoueurs;
     var nbTours;
-    nbjoueurs = parseInt(document.getElementById("nbJoueurs").value);
+    if (host){nbjoueurs = parseInt(document.getElementById("nbJoueurs").value);
     if (nbjoueurs>4){messageSysteme("Ce jeu n'accepte pas plus de 4 joueurs");return;}
     nbTours = parseInt(document.getElementById("nbTours").value)
     if (nbjoueurs==null||isNaN(nbjoueurs)){nbjoueurs=2}
-    if (nbTours==null||isNaN(nbTours)){nbTours=15}
+    if (nbTours==null||isNaN(nbTours)){nbTours=15}}
 
     messageSysteme("Connection en cours.")
     console.log(nbTours);
@@ -181,13 +181,16 @@ socket.on('joined',data=>{
 
 
     document.getElementById("playButton").remove();
+
     players = data.players;
     terrain = data.terrain;
     jeu = data.jeu;
-    boardDétaillé = data.jeucomplet
+    jeuDétaillé = data.jeucomplet
     créerDamier(longueur,largeur,largeurHexagones)
     actualiserDamier(longueur,largeur,terrain);
     remplirDamier(longueur,largeur,jeu,largeurHexagones);
+    document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+localPlayer.force+' | Perception: '+localPlayer.perception+' | Taux reproduction: '+localPlayer.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+localPlayer.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3>'+/*PLACEHOLDER A FAIRE PLUS TARD*/'</div>'
+  
     messageSysteme("Connecté à la partie en tant que "+localPlayer.pseudo);
 })
 

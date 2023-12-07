@@ -5,21 +5,28 @@ body{
 #pannel{
     display: flex;
     height : 150px;
-    background-color: greenyellow;
-    border: solid darkgreen 3px;
+
+
+    border-radius: 12px;
     z-index: 3;
     margin-left: 0;
-    width:100%
+    width:100%;
+    
 }
 .tiers{
     flex:1;
+    background-color: greenyellow;
     border: solid darkgreen 3px;
+    border-radius: 12px;
+
     height: 100%;}
 
     .pannelText{
         text-align: center;
         color:darkgreen;
-        font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        
+        border-radius: 15px;
+        font-family:Georgia, 'Times New Roman', Times, serif;
       padding: 5px;
       margin: 0 auto;
       height: 0.9cm;
@@ -40,7 +47,8 @@ body{
 
 input{
     background-color: aliceblue;
-    border:darkgreen solid;
+    
+    border: darkgreen solid;
 }
 
 #gameRow{

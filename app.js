@@ -100,7 +100,7 @@ io.on('connection', (socket) => {
 
   }
 
-    socket.emit("joined",{"players":game.joueurs,"terrain":terrain,"jeu":jeusimplifié,"jeucomplet":game.board})
+    socket.emit("joined",{"players":game.joueurs,"terrain":terrain,"jeu":jeusimplifié,"jeucomplet":game})
     console.log("Joueurs:\n");
     game.joueurs.forEach(element => {
       console.log(element);
