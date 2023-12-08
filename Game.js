@@ -26,5 +26,19 @@ class Game {
     isFinished() {
         return this.nbtours == this.tourActuel;
     }
+
+    //Liste des cases adjacentes
+  casesAdjacentes(pos){
+    var adj = [pos-13,pos+13,pos-1,pos+1];
+
+    if (((pos%13)%2)==1){
+    adj.push(pos+12);adj.push(pos+14);
+    }
+    else{
+        adj.push(pos-12);adj.push(pos-14);
+    }
+    //On enlève les incorrects
+    return adj.filter((element)=>element>=0&&element<this.board.length);
+  }
 }
 module.exports = { Game };

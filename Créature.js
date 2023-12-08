@@ -10,6 +10,7 @@ class Creature {
     this.strength = strength;
     this.gender = gender; 
     this.position = position;
+    this.cible = position;
     this.hydration = 10;
     this.satiety = 10;
     this.dateOfBirth = new Date();
@@ -31,6 +32,21 @@ class Creature {
     this.hydration -= 1;
     this.satiety -= 0.5;
   }
+
+  deplacement(arrivee, jeu){
+    this.coutDeplacement;
+    jeu.board[this.position] = 0;
+    jeu.board[arrivee] = this;
+    this.position = arrivee;
+  }
+  
+  
+  //Fonction calculant la case sur laquelle la cible tentera de se rendre.
+  findCible(jeu){
+
+  }
+
+
   coutArret(){
     this.hydration -= 0.5;
     this.satiety -= 0.25;

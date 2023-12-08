@@ -79,9 +79,8 @@ io.on('connection', (socket) => {
       let femelle = new Creature(data.tauxrepro,data.perception,data.force,"female",positionTanieres[0])
       game.joueurs[0].addCreature(male)
       game.joueurs[0].addCreature(femelle)
-      game.board[positionTanieres[0]].push(male)
-      game.board[positionTanieres[0]].push(femelle)  
-
+      game.board[positionTanieres[0]].push(male);
+      game.board[positionTanieres[0]].push(femelle);
       console.log("creation partie par "+data.pseudo);
       game.setTours(data.nbTours);
       console.log("Max joueurs: "+data.nbJoueurs+"\nNombre de tours: "+data.nbTours);

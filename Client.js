@@ -168,8 +168,6 @@ function connection(){
     if (nbTours==null||isNaN(nbTours)){nbTours=15}}
 
     messageSysteme("Connection en cours.")
-    console.log(nbTours);
-    console.log(nbjoueurs)
     socket.emit('join',{"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host,"nbTours":nbTours,"nbJoueurs":nbjoueurs})
         localPlayer = {"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host}; 
 }
