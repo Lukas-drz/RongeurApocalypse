@@ -35,21 +35,22 @@ game.setTours(10);
 var largeur=13;
 var longueur=13;
 positionTanieres = [Math.floor(longueur/2),Math.floor(Math.floor(((largeur/2)))*longueur),Math.floor((largeur-1)*longueur+longueur/2),Math.floor(Math.floor(((largeur/2)))*longueur+longueur-1)]
-console.log(positionTanieres)
+console.log("Position des tanières:"+positionTanieres)
+
 //Création de la partie
+for (i=0;i<longueur*largeur;i++){game.board.push(0);}
+
   game.terrain = [];
   for (i=0;i<longueur*largeur;i++){proba = Math.random()*100;
-    if (proba<15){game.terrain.push("eau");}
-    else{if (proba>65){game.terrain.push("plaine");}else{if (proba>55){game.terrain.push("montagne");}else{game.terrain.push("rocher");}}}}
+    if (proba<15){game.terrain.push("eau");}else{if (proba>65){game.terrain.push("plaine");}else{if (proba>55){game.terrain.push("montagne");}else{game.terrain.push("rocher");}}}}
 
     for (i=0;i<game.nbJoueurs;i++){
 
         game.terrain[positionTanieres[i]]=""+(i+1)
         game.board[positionTanieres[i]] = []
     }
-
+    game.tanières = positionTanieres;
     console.log("terrain généré")
-    for (i=0;i<longueur*largeur;i++){game.board.push(0);}
     console.log("Jeu vidé");
   }
 
@@ -75,12 +76,21 @@ io.on('connection', (socket) => {
     if (game==null){
       joueur = new Joueur(true,data.pseudo)
       initGame(joueur,data.nbJoueurs);
-      let male = new Creature(data.tauxrepro,data.perception,data.force,"male",positionTanieres[0])
-      let femelle = new Creature(data.tauxrepro,data.perception,data.force,"female",positionTanieres[0])
+      let male = new Creature(data.tauxrepro,data.perception,data.force,"male",positionTanieres[0],positionTanieres[0])
+      let femelle = new Creature(data.tauxrepro,data.perception,data.force,"female",positionTanieres[0],positionTanieres[0])
       game.joueurs[0].addCreature(male)
       game.joueurs[0].addCreature(femelle)
       game.board[positionTanieres[0]].push(male);
       game.board[positionTanieres[0]].push(femelle);
+
+      male.deplacement(55,game);
+      femelle.deplacement(10,game);
+      femelle.findCible(game)
+      femelle.versCible(game)
+
+      console.log("cible de femme: "+femelle.cible+"Soit la case"+game.getAxis(femelle.cible))
+      console.log("Position de femelle: "+game.getAxis(femelle.position))
+
       console.log("creation partie par "+data.pseudo);
       game.setTours(data.nbTours);
       console.log("Max joueurs: "+data.nbJoueurs+"\nNombre de tours: "+data.nbTours);
@@ -98,8 +108,8 @@ io.on('connection', (socket) => {
 
     //Création du joueur-----
     joueur=new Joueur(false,data.pseudo)
-    let male = new Creature(data.tauxrepro,data.perception,data.force,"male",positionTanieres[game.joueursConnectes])
-    let femelle = new Creature(data.tauxrepro,data.perception,data.force,"female",positionTanieres[game.joueursConnectes])
+    let male = new Creature(data.tauxrepro,data.perception,data.force,"male",positionTanieres[game.joueursConnectes],positionTanieres[game.joueursConnectes])
+    let femelle = new Creature(data.tauxrepro,data.perception,data.force,"female",positionTanieres[game.joueursConnectes],positionTanieres[game.joueursConnectes])
     joueur.addCreature(male)
     joueur.addCreature(femelle)
     game.board[positionTanieres[game.joueursConnectes]].push(male)

@@ -8,6 +8,7 @@ class Game {
         this.tourActuel = 0;
         this.board = [];
         this.terrain = [];
+        this.tanières = [];
     }
     addJoueur(joueur) {
         this.joueurs.push(joueur);
@@ -27,6 +28,13 @@ class Game {
         return this.nbtours == this.tourActuel;
     }
 
+    getAxis(pos){//Cette fonction renvoie sous forme d'un tableau de deux éléments les positions X et Y (donc la ligne et la colonne) de la case demandée. Utile pour jouer les tours
+        return [Math.floor(pos/13),pos%13]
+    }
+    getCase(axis){
+        return axis[0]*13+axis[1]
+    }
+
     //Liste des cases adjacentes
   casesAdjacentes(pos){
     var adj = [pos-13,pos+13,pos-1,pos+1];
@@ -38,7 +46,7 @@ class Game {
         adj.push(pos-12);adj.push(pos-14);
     }
     //On enlève les incorrects
-    return adj.filter((element)=>element>=0&&element<this.board.length);
+    return adj.filter((element)=>element>=0&&element<this.board.length&&this.terrain[element]!="montagne");
   }
 }
 module.exports = { Game };
