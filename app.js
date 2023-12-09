@@ -66,6 +66,26 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
 
     io.emit("actualisation",{"players":game.joueurs,"jeu":jeusimplifié,"jeucomplet":game})
  }
+
+ function tour(jeu) {
+  if (jeu.tourActuel == jeu.nbtours) {
+      console.log("fini");return true;
+  }
+
+  jeu.joueurs.forEach(player => {
+      for (var animal of player.creatures) {
+          animal.jouer(jeu);
+          
+      }
+  });
+
+  jeu.tourActuel++;
+  console.log("Tour: "+jeu.tourActuel)
+  setTimeout(() => {
+    actualisation();
+      tour(jeu);
+  }, 500);
+}
 //-------------------------------Sockets-------------------------------------------
 var haveHost = false;
 io.on('connection', (socket) => {
@@ -83,13 +103,7 @@ io.on('connection', (socket) => {
       game.board[positionTanieres[0]].push(male);
       game.board[positionTanieres[0]].push(femelle);
 
-      male.deplacement(55,game);
-      femelle.deplacement(10,game);
-      femelle.findCible(game)
-      femelle.versCible(game)
-
-      console.log("cible de femme: "+femelle.cible+"Soit la case"+game.getAxis(femelle.cible))
-      console.log("Position de femelle: "+game.getAxis(femelle.position))
+     
 
       console.log("creation partie par "+data.pseudo);
       game.setTours(data.nbTours);
@@ -133,7 +147,9 @@ actualisation();
     game.joueurs.forEach(element => {
       console.log(element);
     });
-  
+  if (game.nbJoueurs==game.joueursConnectes){
+    console.log("démarrage de la partie")
+    tour(game)}
 });
 
   socket.on('unload',data=>{if(data==true){haveHost=false;console.log("hôte déconnecté.")}})

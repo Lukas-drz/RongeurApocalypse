@@ -12,8 +12,8 @@ class Creature {
     this.position = position;
     this.cible = position;
     this.tanière = postaniere;
-    this.hydration = 10;
-    this.satiety = 10;
+    this.hydration = 4;
+    this.satiety = 4;
     this.cooldown = 0;
     this.dateOfBirth = new Date();
     this.dateOfDeath = null;
@@ -24,7 +24,7 @@ class Creature {
       this.hydration = 10;
     }
   }
-  addPrarie(){
+  addPrairie(){
     this.satiety += 2;
     if (this.satiety > 10){
       this.satiety = 10;
@@ -36,10 +36,21 @@ class Creature {
   }
 
   deplacement(arrivee, jeu){
-    this.coutDeplacement;
-    jeu.board[this.position] = 0;
-    jeu.board[arrivee] = this;
-    this.position = arrivee;
+    this.coutDeplacement();
+    if (arrivee==this.tanière){
+      jeu.board[this.tanière].push(this)
+    }
+    else{
+      jeu.board[arrivee] = this;}
+
+      if (this.position==this.tanière){
+        jeu.board[this.position]=jeu.board[this.position].filter((elem)=>elem!=this);
+      }
+      else{
+      jeu.board[this.position] = 0;
+      }
+
+      this.position = arrivee;
   }
 
 
@@ -50,9 +61,10 @@ class Creature {
     var cible;
     var possiblePositions = [];
     var besoin;
-    if (this.satiety>6&&this.hydration>6){this.cible= this.tanière;return;}
-    if (this.hydration+1<=this.satiety){besoin = "plaine"}
-    else{besoin = "eau"}
+    if (this.satiety>6&&this.hydration>6&&this.cooldown==0){this.cible= this.tanière;return;}
+
+    if (this.hydration<=this.satiety){besoin = "eau"}
+    else{besoin = "plaine"}
     possiblePositions.push(this.position)
     
     for (i=0;i<distance;i++){
@@ -367,6 +379,33 @@ class Creature {
       return false;
     }
   }
+
+tuer(jeu){
+  if (this.position==this.tanière){
+    jeu.board[this.position]=jeu.board[this.position].filter((elem)=>elem!=this);return;
+  }
+  jeu.board[this.position]=0
+  jeu.joueurs.forEach(element => {
+    element.creatures = element.creatures.filter((elem)=>elem!=this);    
+  });
+  
+}
+
+jouer(jeu){
+  if (this.isCreatureDead()){this.tuer(jeu);return;}
+  
+  if (jeu.terrain[this.position]=="plaine"){this.addPrairie();console.log("creature a mange");}
+  if (jeu.terrain[this.position]=="eau"){this.addWater();console.log("creature a bu")}
+  this.findCible(jeu);
+  if (this.cible==this.position){this.coutArret();return}
+  this.versCible(jeu);
+  return;
+
+
+
+}
+
+
 
 }
 /* Classes filles pas forcément utiles, à voir

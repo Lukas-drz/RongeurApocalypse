@@ -48,5 +48,27 @@ class Game {
     //On enlève les incorrects
     return adj.filter((element)=>element>=0&&element<this.board.length&&this.terrain[element]!="montagne");
   }
+
+
+tour() {
+    if (this.tourActuel == this.nbtours) {
+        return true;
+    }
+
+    this.joueurs.forEach(player => {
+        for (var animal of player.creatures) {
+            animal.jouer(this);
+        }
+    });
+
+    this.tourActuel++;
+
+    setTimeout(() => {
+        this.tour();
+    }, 300);
+}
+
+    
+
 }
 module.exports = { Game };

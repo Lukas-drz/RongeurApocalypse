@@ -6,7 +6,7 @@ var host = false;
 
 var largeur=13;
 var longueur=13;
-var localPlayer;
+
 //Test qui génère un tableau de jeu rapide, à enlever plus tard lorsuqu'on aura externalisé ça
 var jeu;
 var largeurHexagones = 27;
@@ -64,7 +64,7 @@ function créerDamier(nbLines, nbColumns, rayon) {
                 .attr("id", "h" + (l * nbLines + c))
                 .on("click", function (data) {
                     socket.emit('coup', { "case": this.id, "pseudo": informationsJoueur.pseudo });
-                    console.log("Pouvoir utilisé sur l'hexagone" + this.id + " joué par joueur " + informationsJoueur.pseudo);
+                    console.log("Pouvoir utilisé sur l'hexagone " + this.id + " joué par le joueur " + informationsJoueur.pseudo);
                 });
 
             // Ajout de l'image depuis l'URL spécifiée
@@ -169,7 +169,7 @@ function connection(){
 
     messageSysteme("Connection en cours.")
     socket.emit('join',{"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host,"nbTours":nbTours,"nbJoueurs":nbjoueurs})
-        localPlayer = {"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host}; 
+        informationsJoueur = {"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host}; 
 }
 
 socket.on('joined',data=>{
@@ -186,9 +186,9 @@ socket.on('joined',data=>{
     créerDamier(longueur,largeur,largeurHexagones)
     actualiserDamier(longueur,largeur,terrain);
     remplirDamier(longueur,largeur,jeu,largeurHexagones);
-    document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+localPlayer.force+' | Perception: '+localPlayer.perception+' | Taux reproduction: '+localPlayer.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+localPlayer.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3>'+/*PLACEHOLDER A FAIRE PLUS TARD*/'</div>'
+    document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+informationsJoueur.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3>'+/*PLACEHOLDER A FAIRE PLUS TARD*/'</div>'
   
-    messageSysteme("Connecté à la partie en tant que "+localPlayer.pseudo);
+    messageSysteme("Connecté à la partie en tant que "+informationsJoueur.pseudo);
 })
 
 window.addEventListener("beforeunload", (event) => {
