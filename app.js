@@ -72,11 +72,15 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
       console.log("fini");return true;
   }
 
+  jeu.reproduction();
   jeu.joueurs.forEach(player => {
       for (var animal of player.creatures) {
-          animal.jouer(jeu);
-          
+        animal.jouer(jeu);
+        if (animal.cooldown>0){animal.cooldown--}
+        
       }
+      actualisation();
+      console.log(game.joueurs[0].creatures)
   });
 
   jeu.tourActuel++;

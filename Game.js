@@ -1,3 +1,4 @@
+const { Creature } = require('./Créature.js');
 class Game {
     constructor(host) {
         this.host = host;
@@ -50,22 +51,35 @@ class Game {
   }
 
 
-tour() {
-    if (this.tourActuel == this.nbtours) {
-        return true;
+reproduction(){
+
+    for (i=0;i<this.nbJoueurs;i++){
+        var listeRepro = this.board[this.tanières[i]];
+        for (var animal of listeRepro){
+            if (animal.cooldown==0){
+            for (var j of listeRepro){
+                if (j!=animal&&j.cooldown==0&&j.gender!=animal.gender){
+                    console.log("reproduction")
+                    console.log(animal);
+                    console.log(i);
+                    for (var y=0;y<animal.reproductionRate;y++){
+                        let creature;                           
+                        if (Math.random(2)==0){
+                        creature = new Creature(animal.reproductionRate,animal.perception,animal.strength,"male",this.tanières[i],this.tanières[i])}
+                        else{
+                        creature = new Creature(animal.tauxrepro,animal.perception,animal.force,"female",this.tanières[i],this.tanières[i])}
+                        this.board[this.tanières[i]].push(creature)
+                        this.joueurs[i].creatures.push(creature)
+                        animal.cooldown = 5;
+                        j.cooldown=5;
+                    }
+                }
+            }
+        }
+        }
     }
 
-    this.joueurs.forEach(player => {
-        for (var animal of player.creatures) {
-            animal.jouer(this);
-        }
-    });
 
-    this.tourActuel++;
-
-    setTimeout(() => {
-        this.tour();
-    }, 300);
 }
 
     
