@@ -39,7 +39,7 @@ class Game {
     //Liste des cases adjacentes
   casesAdjacentes(pos){
     var adj = [pos-13,pos+13,pos-1,pos+1];
-
+    adj = adj.filter((elem)=>elem<this.board.length&&elem>=0)
     if (((pos%13)%2)==1){
     adj.push(pos+12);adj.push(pos+14);
     }
@@ -55,24 +55,23 @@ reproduction(){
 
     for (i=0;i<this.nbJoueurs;i++){
         var listeRepro = this.board[this.tanières[i]];
+        if (listeRepro!=[]){
         for (var animal of listeRepro){
             if (animal.cooldown==0){
             for (var j of listeRepro){
                 if (j!=animal&&j.cooldown==0&&j.gender!=animal.gender){
-                    console.log("reproduction")
-                    console.log(animal);
-                    console.log(i);
                     for (var y=0;y<animal.reproductionRate;y++){
                         let creature;                           
                         if (Math.random(2)==0){
                         creature = new Creature(animal.reproductionRate,animal.perception,animal.strength,"male",this.tanières[i],this.tanières[i])}
                         else{
-                        creature = new Creature(animal.tauxrepro,animal.perception,animal.force,"female",this.tanières[i],this.tanières[i])}
+                        creature = new Creature(animal.reproductionRate,animal.perception,animal.strength,"female",this.tanières[i],this.tanières[i])}
                         this.board[this.tanières[i]].push(creature)
                         this.joueurs[i].creatures.push(creature)
                         animal.cooldown = 5;
                         j.cooldown=5;
                     }
+                }
                 }
             }
         }

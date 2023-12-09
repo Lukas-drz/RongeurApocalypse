@@ -120,7 +120,13 @@ function remplirDamier(longueur,largeur,jeu,rayon){
             .attr("y", centreY-(rayon*1.4)/2) 
             .attr("width", rayon*1.4) 
             .attr("height", rayon*1.4) 
-            .attr("class", "hexagon-image"); 
+            .attr("class", "hexagon-image")
+            .attr("id", "c" + position)
+            .on("mouseover",function(data){
+                var pos = this.id.substring(1);
+                document.getElementById("afficheCase").innerHTML =  '<h3>Informations créature</h3><h4>Faim: '+jeuDétaillé.board[pos].satiety+' | Soif: '+jeuDétaillé.board[pos].hydration+' | CD reproduction: '+jeuDétaillé.board[pos].cooldown+'</h4>'
+
+            })
         }
     }
 
@@ -186,7 +192,7 @@ socket.on('joined',data=>{
     créerDamier(longueur,largeur,largeurHexagones)
     actualiserDamier(longueur,largeur,terrain);
     remplirDamier(longueur,largeur,jeu,largeurHexagones);
-    document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+informationsJoueur.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3>'+/*PLACEHOLDER A FAIRE PLUS TARD*/'</div>'
+    document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+informationsJoueur.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3><div id="afficheCase"></div></div>'
   
     messageSysteme("Connecté à la partie en tant que "+informationsJoueur.pseudo);
 })
