@@ -61,8 +61,8 @@ class Creature {
     var cible;
     var possiblePositions = [];
     var besoin;
+    if (this.cible==this.tanière&&this.satiety>3&&this.hydration>3){this.cible=this.tanière;return;}
     if (this.satiety>6&&this.hydration>6&&this.cooldown==0){this.cible= this.tanière;return;}
-    if (this.cible==this.tanière&&this.satiety>3&&this.hydration>3&&this.cooldown==0){this.cible=this.tanière;return;}
 
     if (this.hydration<=this.satiety){besoin = "eau"}
     else{besoin = "plaine"}

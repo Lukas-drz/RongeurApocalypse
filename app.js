@@ -80,7 +80,6 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
         
       }
       actualisation();
-      console.log(game.joueurs[0].creatures)
   });
 
   jeu.tourActuel++;

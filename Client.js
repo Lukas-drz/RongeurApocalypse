@@ -103,7 +103,6 @@ function remplirDamier(longueur,largeur,jeu,rayon){
     
         var imageUrl = "http://localhost:8888/fichier/player3.png";
         var svgJeu = d3.select("#jeu");
-    var svgJeu = d3.select("#jeu");
         svgJeu.selectAll(".hexagon-image").remove();
 
     for (i in jeu){
