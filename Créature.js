@@ -12,8 +12,8 @@ class Creature {
     this.position = position;
     this.cible = position;
     this.tanière = postaniere;
-    this.hydration = 10;
-    this.satiety = 10;
+    this.hydration = 5;
+    this.satiety = 5;
     this.cooldown = 3;
     this.dateOfBirth = new Date();
     this.dateOfDeath = null;

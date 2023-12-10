@@ -87,7 +87,7 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
   setTimeout(() => {
     actualisation();
       tour(jeu);
-  }, 1000);
+  }, 700);
 }
 //-------------------------------Sockets-------------------------------------------
 var haveHost = false;

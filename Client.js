@@ -107,6 +107,10 @@ function remplirDamier(longueur,largeur,jeu,rayon){
 
     for (i in jeu){
         imageUrl = "http://localhost:8888/fichier/player"+i+".png";
+
+        if (informationsJoueur.pseudo=="Ryan Gosling"){
+            imageUrl = "http://localhost:8888/fichier/gosling"+i+".png";
+        }
         
         for (position of jeu[i]){
         var hexagonElement = d3.select("#h" + position);
@@ -173,8 +177,8 @@ function connection(){
     if (nbTours==null||isNaN(nbTours)){nbTours=15}}
 
     messageSysteme("Connection en cours.")
+    informationsJoueur = {"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host}; 
     socket.emit('join',{"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host,"nbTours":nbTours,"nbJoueurs":nbjoueurs})
-        informationsJoueur = {"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host}; 
 }
 
 socket.on('joined',data=>{
@@ -183,6 +187,9 @@ socket.on('joined',data=>{
 
 
     document.getElementById("playButton").remove();
+    if (informationsJoueur.pseudo=="Ryan Gosling"){
+        document.getElementById("background").src ="http://localhost:8888/fichier/gosling.gif"
+    }
 
     players = data.players;
     jeuDétaillé = data.jeucomplet
@@ -202,6 +209,7 @@ window.addEventListener("beforeunload", (event) => {
   
 
 socket.on("actualisation",data=>{
+    if (informationsJoueur==null){return;}
     players = data.players;
     jeuDétaillé = data.jeucomplet
     terrain = jeuDétaillé.terrain;
