@@ -12,9 +12,9 @@ class Creature {
     this.position = position;
     this.cible = position;
     this.tanière = postaniere;
-    this.hydration = 7;
-    this.satiety = 7;
-    this.cooldown = 3;
+    this.hydration = 10;
+    this.satiety = 10;
+    this.cooldown = 5;
     this.dateOfBirth = new Date();
     this.dateOfDeath = null;
   }
@@ -62,18 +62,20 @@ class Creature {
     var possiblePositions = [];
     possiblePositions.push(this.position);
     var besoin;
-    if (this.cible==this.tanière&&this.satiety>3&&this.hydration>3&&this.cooldown==0){this.cible=this.tanière;return;}
-    if (this.satiety>6&&this.hydration>6&&this.cooldown==0){this.cible= this.tanière;return;}
+    if (this.cible==this.tanière&&this.satiety>2&&this.hydration>2&&this.cooldown==0){this.cible=this.tanière;return;}
+    if (this.satiety>=6&&this.hydration>=6&&this.cooldown==0){this.cible=this.tanière;return;}
+
 
     if (this.hydration<=this.satiety){besoin = "eau"}
     else{besoin = "plaine"}
+  
     possiblePositions.push(this.position)
     
     for (i=0;i<distance;i++){
       var tablo = [];//pour éviter le bouclage infini
       for (let element of possiblePositions){
           for (let j of jeu.casesAdjacentes(element)){
-              if ((jeu.terrain[j]==besoin)&&(jeu.board[j]==0||((jeu.board[j].strength<this.strength&&(jeu.board[j].tanière!=this.tanière))))){this.cible=j;return;}
+              if (((jeu.terrain[j]==besoin)&&(jeu.board[j]==0)||(((jeu.board[j].strength<this.strength&&(jeu.board[j].tanière!=this.tanière)))))){this.cible=j;return;}
               if (!tablo.includes(j)&&(jeu.board[j]==0||jeu.tanières.includes(j)||(jeu.board[j].strength<this.strength&&(jeu.board[j].tanière!=this.tanière))))
               {tablo.push(j)
               };
@@ -167,7 +169,7 @@ class Creature {
 
 
         //-------------------------------------------------------------------------------------------------------------------------------
-        if (jeu.getAxis(this.cible)[0]<jeu.getAxis(this.position)[0]){//Cas où la cible est sur une colone à gauche de celle de l'animal
+        if (jeu.getAxis(this.cible)[0]<jeu.getAxis(this.position)[0]){//Cas où la cible est sur une colonne à gauche de celle de l'animal
 
           if (jeu.getAxis(this.cible)[1]==jeu.getAxis(this.position)[1]){//Cas où la cible est sur la même ligne que celle de l'animal
             
@@ -250,7 +252,7 @@ class Creature {
             this.deplacement(tentative,jeu);return;
           } 
 
-          if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])}
+          if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]+1])}
           if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           } 
@@ -422,11 +424,11 @@ tuer(jeu){
 jouer(jeu){
   if (this.isCreatureDead()==true){this.tuer(jeu);return;}
   
+  this.findCible(jeu);
+  if (this.cible==this.position){  if (jeu.terrain[this.position]=="plaine"){this.addPrairie();}if (jeu.terrain[this.position]=="eau"){this.addWater()}this.coutArret();return}
+  this.versCible(jeu);
   if (jeu.terrain[this.position]=="plaine"){this.addPrairie();}
   if (jeu.terrain[this.position]=="eau"){this.addWater()}
-  this.findCible(jeu);
-  if (this.cible==this.position){this.coutArret();return}
-  this.versCible(jeu);
   return;
 
 

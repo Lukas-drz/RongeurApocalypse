@@ -38,16 +38,31 @@ class Game {
 
     //Liste des cases adjacentes
   casesAdjacentes(pos){
-    var adj = [pos-13,pos+13,pos-1,pos+1];
-    adj = adj.filter((elem)=>elem<this.board.length&&elem>=0);
-    if (((pos%13)%2)==1){
-    adj.push(pos+12);adj.push(pos+14);
-    adj = adj.filter((elem)=>elem<this.board.length&&elem>=0);
+    var adj = [pos];
+    if (pos/13!=0){//Si pas col gauche
+        adj.push(pos-13)
     }
-    else{
-        adj.push(pos-12);adj.push(pos-14);
-        adj = adj.filter((elem)=>elem<this.board.length&&elem>=0);
+    if (pos/13!=12){//Si pas col droite
+        adj.push(pos+13)
     }
+
+    if (((pos%13)%2)==1){//ligne impaire
+    adj.push(pos+12);adj.push(pos+14);adj.push(pos-1);adj.push(pos+1)
+    }
+    else{//Ligne paire
+        if (pos%13!=0){//Ligne pas 0
+            adj.push(pos-1);
+            if (pos/13!=0){//Si pas col gauche
+                adj.push(pos-14);
+            }
+        }   if (pos%13!=12){//Ligne pas 12
+            adj.push(pos+1);
+            if (pos/13!=0){//Si pas col gauche
+                adj.push(pos-12);
+            }
+        }
+    }
+
     //On enlève les incorrects
     return adj.filter((element)=>element>=0&&element<this.board.length&&this.terrain[element]!="montagne");
   }

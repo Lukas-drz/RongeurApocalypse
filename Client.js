@@ -127,7 +127,7 @@ function remplirDamier(longueur,largeur,jeu,rayon){
             .attr("id", "c" + position)
             .on("mouseover",function(data){
                 var pos = this.id.substring(1);
-                document.getElementById("afficheCase").innerHTML =  '<h3>Informations créature</h3><h4>Faim: '+jeuDétaillé.board[pos].satiety+' | Soif: '+jeuDétaillé.board[pos].hydration+' | CD reproduction: '+jeuDétaillé.board[pos].cooldown+'</h4>'
+                document.getElementById("afficheCase").innerHTML =  '<h3>Informations créature</h3><h4>Faim: '+jeuDétaillé.board[pos].satiety+' | Soif: '+jeuDétaillé.board[pos].hydration+' | CD reproduction: '+jeuDétaillé.board[pos].cooldown+'</h4><h4>Cible: '+jeuDétaillé.board[pos].cible+'</h4>'
 
             })
         }

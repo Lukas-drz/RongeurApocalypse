@@ -42,7 +42,7 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
 
   game.terrain = [];
   for (i=0;i<longueur*largeur;i++){proba = Math.random()*100;
-    if (proba<15){game.terrain.push("eau");}else{if (proba>65){game.terrain.push("plaine");}else{if (proba>55){game.terrain.push("montagne");}else{game.terrain.push("rocher");}}}}
+    if (proba<15){game.terrain.push("eau");}else{if (proba>65){game.terrain.push("plaine");}else{if (proba>57){game.terrain.push("montagne");}else{game.terrain.push("rocher");}}}}
 
     for (i=0;i<game.nbJoueurs;i++){
 
@@ -63,7 +63,6 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
     jeusimplifié[i].push(creature.position);
   }
   }
-
     io.emit("actualisation",{"players":game.joueurs,"jeu":jeusimplifié,"jeucomplet":game})
  }
 
