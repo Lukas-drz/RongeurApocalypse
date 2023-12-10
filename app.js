@@ -34,7 +34,7 @@ game.setNbJoueurs(nbJoueurs);
 game.setTours(10);
 var largeur=13;
 var longueur=13;
-positionTanieres = [Math.floor(longueur/2),Math.floor(Math.floor(((largeur/2)))*longueur),Math.floor((largeur-1)*longueur+longueur/2),Math.floor(Math.floor(((largeur/2)))*longueur+longueur-1)]
+positionTanieres = [Math.floor(longueur/2),Math.floor((largeur-1)*longueur+longueur/2),Math.floor(Math.floor(((largeur/2)))*longueur),Math.floor(Math.floor(((largeur/2)))*longueur+longueur-1)]
 console.log("Position des tanières:"+positionTanieres)
 
 //Création de la partie
@@ -87,7 +87,7 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
   setTimeout(() => {
     actualisation();
       tour(jeu);
-  }, 700);
+  }, 1000);
 }
 //-------------------------------Sockets-------------------------------------------
 var haveHost = false;

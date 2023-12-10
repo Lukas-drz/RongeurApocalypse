@@ -209,6 +209,8 @@ window.addEventListener("beforeunload", (event) => {
   
 
 socket.on("actualisation",data=>{
+    document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+informationsJoueur.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3><div id="afficheCase"></div></div>'
+  
     if (informationsJoueur==null){return;}
     players = data.players;
     jeuDétaillé = data.jeucomplet

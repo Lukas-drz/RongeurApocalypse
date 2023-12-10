@@ -39,12 +39,14 @@ class Game {
     //Liste des cases adjacentes
   casesAdjacentes(pos){
     var adj = [pos-13,pos+13,pos-1,pos+1];
-    adj = adj.filter((elem)=>elem<this.board.length&&elem>=0)
+    adj = adj.filter((elem)=>elem<this.board.length&&elem>=0);
     if (((pos%13)%2)==1){
     adj.push(pos+12);adj.push(pos+14);
+    adj = adj.filter((elem)=>elem<this.board.length&&elem>=0);
     }
     else{
         adj.push(pos-12);adj.push(pos-14);
+        adj = adj.filter((elem)=>elem<this.board.length&&elem>=0);
     }
     //On enlève les incorrects
     return adj.filter((element)=>element>=0&&element<this.board.length&&this.terrain[element]!="montagne");
