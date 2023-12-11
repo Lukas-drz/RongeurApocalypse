@@ -67,11 +67,12 @@ function créerDamier(nbLines, nbColumns, rayon) {
                     console.log("Pouvoir utilisé sur l'hexagone " + this.id + " joué par le joueur " + informationsJoueur.pseudo);
                 });
 
-            // Ajout de l'image depuis l'URL spécifiée
 
         }
     }
 }
+
+
 
 
 //Coloriage d'un hexagone
@@ -113,6 +114,7 @@ function remplirDamier(longueur,largeur,jeu,rayon){
         }
         
         for (position of jeu[i]){
+            jeu = jeu.filter((element)=>element!=position)
         var hexagonElement = d3.select("#h" + position);
         var boundingBox = hexagonElement.node().getBBox();
         var centreX = boundingBox.x + boundingBox.width / 2;
@@ -127,13 +129,95 @@ function remplirDamier(longueur,largeur,jeu,rayon){
             .attr("id", "c" + position)
             .on("mouseover",function(data){
                 var pos = this.id.substring(1);
-                document.getElementById("afficheCase").innerHTML =  '<h3>Informations créature</h3><h4>Faim: '+jeuDétaillé.board[pos].satiety+' | Soif: '+jeuDétaillé.board[pos].hydration+' | CD reproduction: '+jeuDétaillé.board[pos].cooldown+'</h4><h4>Cible: '+jeuDétaillé.board[pos].cible+'</h4>'
-
+                if (!jeuDétaillé.tanières.includes(parseInt(pos))){
+                document.getElementById("afficheCase").innerHTML =  '<h3>Informations de '+jeuDétaillé.board[pos].nom+'</h3><h4>Faim: '+jeuDétaillé.board[pos].satiety+' | Soif: '+jeuDétaillé.board[pos].hydration+' | CD reproduction: '+jeuDétaillé.board[pos].cooldown+'</h4><h4>Cible: '+jeuDétaillé.board[pos].cible+' | Sexe: '+jeuDétaillé.board[pos].gender+'</h4>'
+                }
             })
         }
     }
 
 }
+//Tanière
+
+
+function créerTanière(rayon) {
+    document.getElementById("tanière").innerHTML = "";
+    Hexagone = creerHexagone(rayon);
+    for (var l = 0; l < 2; l++) {
+        for (var c = 0; c < 5; c++) {
+            var d = "";
+            var x, y;
+
+            for (var i = 0; i < 6; i++) {
+                h = Hexagone[i];
+                x = h[0] + (Hexagone[1][0] - Hexagone[0][0]) * l * 2;
+                if (c % 2 == 1) {
+                    x += (Hexagone[1][0] - Hexagone[0][0]);
+                }
+                y = h[1] + (Hexagone[1][1] - Hexagone[0][1]) * c * 3;
+
+                if (i == 0) {
+                    d += "M" + x + "," + y + " L";
+                } else {
+                    d += x + "," + y + " ";
+                }
+            }
+            d += "Z";
+            d3.select("#tanière")
+                .append("path")
+                .attr("d", d)
+                .attr("stroke", "black")
+                .attr("fill", "saddlebrown")
+                .attr("id", "t" + (l * 5 + c))
+            }}}
+
+
+            function remplirTanière(jeu,rayon){
+                var idj;
+                for (var test of jeu.joueurs){
+                    if (test.pseudo == informationsJoueur.pseudo) {idj = jeu.joueurs.indexOf(test);}
+                }
+
+
+                var imageUrl = "http://localhost:8888/fichier/player"+idj+".png";
+                var svgJeu = d3.select("#tanière");
+                svgJeu.selectAll(".hexagon-image").remove();
+        
+  
+                if (informationsJoueur.pseudo=="Ryan Gosling"){
+                    imageUrl = "http://localhost:8888/fichier/gosling"+idj+".png";
+                }
+                
+                for (var creat in jeu.board[jeu.tanières[idj]]){
+                    creature = jeu.board[jeu.tanières[idj]][creat]
+                var hexagonElement = d3.select("#t" + jeu.board[jeu.tanières[idj]].indexOf(creature));
+                var boundingBox = hexagonElement.node().getBBox();
+                var centreX = boundingBox.x + boundingBox.width / 2;
+                var centreY = boundingBox.y + boundingBox.height / 2;
+                svgJeu.append("image")
+                    .attr("xlink:href", imageUrl)
+                    .attr("x", centreX-(rayon*1.4)/2) 
+                    .attr("y", centreY-(rayon*1.4)/2) 
+                    .attr("width", rayon*1.4) 
+                    .attr("height", rayon*1.4) 
+                    .attr("class", "hexagon-image")
+                    .attr("id", "ct" + creat)
+                    .on("mouseover",function(data){
+                        var idj;
+                        var pos = this.id.substring(2);
+                        console.log(pos)
+                        for (var test of jeuDétaillé.joueurs){
+                            if (test.pseudo == informationsJoueur.pseudo) {idj = jeu.joueurs.indexOf(test);}
+                        }
+                        var pointee = jeuDétaillé.board[jeuDétaillé.tanières[idj]][pos];
+                        document.getElementById("afficheCase").innerHTML =  '<h3>Informations de '+pointee.nom+'</h3><h4>Faim: '+pointee.satiety+' | Soif: '+pointee.hydration+' | CD reproduction: '+pointee.cooldown+'</h4><h4>Cible: '+pointee.cible+' | Sexe: '+pointee.gender+'</h4>'
+        
+                    })
+                }
+            }
+        
+        
+
 
   //Affichage message système
   function messageSysteme(message){
@@ -196,9 +280,11 @@ socket.on('joined',data=>{
     terrain = jeuDétaillé.terrain;
     jeu = data.jeu;
     créerDamier(longueur,largeur,largeurHexagones)
+    créerTanière(largeurHexagones)
     actualiserDamier(longueur,largeur,terrain);
     remplirDamier(longueur,largeur,jeu,largeurHexagones);
-    document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+informationsJoueur.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3><div id="afficheCase"></div></div>'
+    remplirTanière(jeuDétaillé,largeurHexagones)
+    document.getElementById("pannel").innerHTML= '<div class="tiers" id=stats> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers" id="middle"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+informationsJoueur.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3><div id="afficheCase"></div></div>'
   
     messageSysteme("Connecté à la partie en tant que "+informationsJoueur.pseudo);
 })
@@ -209,8 +295,9 @@ window.addEventListener("beforeunload", (event) => {
   
 
 socket.on("actualisation",data=>{
-    document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+informationsJoueur.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3><div id="afficheCase"></div></div>'
-  
+     document.getElementById("stats").innerHTML = '<h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p>'
+
+
     if (informationsJoueur==null){return;}
     players = data.players;
     jeuDétaillé = data.jeucomplet
@@ -219,5 +306,6 @@ socket.on("actualisation",data=>{
     créerDamier(longueur,largeur,largeurHexagones)
     actualiserDamier(longueur,largeur,terrain);
     remplirDamier(longueur,largeur,jeu,largeurHexagones);
+    remplirTanière(jeuDétaillé,largeurHexagones)
 })
 

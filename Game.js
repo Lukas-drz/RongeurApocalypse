@@ -69,21 +69,22 @@ class Game {
 
 
 reproduction(){
-
+    var listeRepro;
     for (i=0;i<this.nbJoueurs;i++){
-        var listeRepro = this.board[this.tanières[i]];
-        if (listeRepro!=[]){
+        listeRepro = this.board[this.tanières[i]];
+        if (listeRepro.length<10&&(listeRepro!=[]||listeRepro!=undefined)){
         for (var animal of listeRepro){
             if (animal.cooldown==0){
             for (var j of listeRepro){
                 if (j!=animal&&j.cooldown==0&&j.gender!=animal.gender){
                     for (var y=0;y<animal.reproductionRate;y++){
                         let creature;                           
-                        if (Math.random(2)==0){
-                        creature = new Creature(animal.reproductionRate,animal.perception,animal.strength,"male",this.tanières[i],this.tanières[i])}
+                        if (Math.random()*100<=50){
+                        creature = new Creature(animal.reproductionRate,animal.perception,animal.strength,"male",animal.tanière,animal.tanière)}
                         else{
-                        creature = new Creature(animal.reproductionRate,animal.perception,animal.strength,"female",this.tanières[i],this.tanières[i])}
-                        this.board[this.tanières[i]].push(creature)
+                        creature = new Creature(animal.reproductionRate,animal.perception,animal.strength,"female",animal.tanière,animal.tanière)}
+
+                        this.board[animal.tanière].push(creature)
                         this.joueurs[i].creatures.push(creature)
                         animal.cooldown = 5;
                         j.cooldown=5;

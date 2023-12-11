@@ -2,9 +2,6 @@ class Creature {
   // ajouter reproduction
   constructor(reproductionRate, perception, strength, gender, position,postaniere) {
     // Chaque joueur doit distribuer 9 points sur trois axes valués de 1 à 5 :
-      if (reproductionRate < 1 || perception < 1 || strength < 1 || reproductionRate > 5 || perception > 5 || strength > 5 || reproductionRate + perception + strength > 9) {
-        throw new Error('Les valeurs doivent être supérieures ou égales à 1 et inferieures ou egales a 5 et le total doit donner 9');
-    }
     this.reproductionRate = reproductionRate;
     this.perception = perception;
     this.strength = strength;
@@ -12,11 +9,21 @@ class Creature {
     this.position = position;
     this.cible = position;
     this.tanière = postaniere;
-    this.hydration = 10;
-    this.satiety = 10;
+    this.hydration = 5;
+    this.satiety = 5;
     this.cooldown = 5;
     this.dateOfBirth = new Date();
     this.dateOfDeath = null;
+    var nom = "";
+    var syllabes = ["ta","to","ti","tu","te","mu","pa","po","pom","pi","ra","ka","ja","fa","fi","ji","lo","li","la","moissat","ju","lu","ron","ton","pang","dong","wa","rio","piou","za","zo","fa","coco","ja","dor"]
+    var syllabe = Math.floor(Math.random() * 3) + 2;
+    for (var sylcourante=0;sylcourante<syllabe;sylcourante++){
+      nom += syllabes[Math.floor(Math.random()*syllabes.length)];
+    }
+    if (Math.random() * 100<3){nom+= " De Savigne.";this.strength++;this.perception++;}//Créature noble
+    this.nom = nom;
+    if (this.nom=="pompidor"){this.strength=40;}
+
   }
   addWater(){
     this.hydration += 3;
@@ -49,8 +56,8 @@ class Creature {
       else{
       jeu.board[this.position] = 0;
       }
-
       this.position = arrivee;
+
   }
 
 
@@ -62,13 +69,15 @@ class Creature {
     var possiblePositions = [];
     possiblePositions.push(this.position);
     var besoin;
-    if (this.cible==this.tanière&&this.satiety>2&&this.hydration>2&&this.cooldown==0){this.cible=this.tanière;return;}
-    if (this.satiety>=6&&this.hydration>=6&&this.cooldown==0){this.cible=this.tanière;return;}
+    if (this.cible==this.tanière&&this.satiety>3&&this.hydration>4&&this.cooldown==0&&jeu.board[this.tanière].length<7){this.cible=this.tanière;return;}
+    if (this.satiety>=6&&this.hydration>=6&&this.cooldown==0&&jeu.board[this.tanière].length<5){this.cible=this.tanière;return;}
 
 
     if (this.hydration<=this.satiety){besoin = "eau"}
     else{besoin = "plaine"}
-  
+    if ((jeu.terrain[this.position]==besoin)){this.cible=this.position;return;}
+
+
     possiblePositions.push(this.position)
     
     for (i=0;i<distance;i++){
@@ -106,29 +115,29 @@ class Creature {
       if (jeu.getAxis(this.cible)[0]==jeu.getAxis(this.position)[0]){//Cas où ils sont sur la même colonne
         if (jeu.getAxis(this.cible)[1]>jeu.getAxis(this.position)[1]){//cas où la cible est sur une ligne plus basse que celle de l'animal
           tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
           if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
 
           tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]])
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]])
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]-1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]-1])}
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           return;
@@ -137,28 +146,28 @@ class Creature {
         }
         else{//Cas où la cible est sur une ligne plus haute que l'animal
           tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]-1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]-1])}
           
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]])
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]])
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
           if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           return;
@@ -174,37 +183,37 @@ class Creature {
           if (jeu.getAxis(this.cible)[1]==jeu.getAxis(this.position)[1]){//Cas où la cible est sur la même ligne que celle de l'animal
             
             tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
             if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]-1])}
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
             if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]+1])}
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
             tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
 
             tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
             if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             return;
@@ -214,31 +223,31 @@ class Creature {
           if (jeu.getAxis(this.cible)[1]>jeu.getAxis(this.position)[1]){//cas où la cible est sur une ligne plus basse que celle de l'animal
             
             if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]+1])}
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
             tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
             tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]-1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]-1])}
           
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
             tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             return;
@@ -248,31 +257,31 @@ class Creature {
         else{//Cas où la cible est sur une ligne plus haute que l'animal
 
           if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]-1])}
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           } 
 
           if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]+1])}
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           } 
           tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]])
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
        
           tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]])
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
 
           if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}
           
-          if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+          if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
             this.deplacement(tentative,jeu);return;
           }
           //OK
@@ -289,30 +298,30 @@ class Creature {
           if (jeu.getAxis(this.cible)[1]==jeu.getAxis(this.position)[1]){//Cas où la cible est sur la même ligne que celle de l'animal
             
             tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]-1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])}
           
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             //OK
             tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
 
             tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])
-            if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+            if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
               this.deplacement(tentative,jeu);return;
             }
             return;
@@ -322,31 +331,31 @@ class Creature {
             if (jeu.getAxis(this.cible)[1]>jeu.getAxis(this.position)[1]){//cas où la cible est sur une ligne plus basse que celle de l'animal
               
               if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
               
               tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]])
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
               tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
             
               if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]-1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]-1])}
           
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
 
               tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]])
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
               tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
               return;
@@ -360,28 +369,28 @@ class Creature {
 
               if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]-1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]-1])}
           
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
               tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]-1])
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
               tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]])
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
               if (((this.position%13)%2)==1){tentative = jeu.getCase([jeu.getAxis(this.position)[0]+1,jeu.getAxis(this.position)[1]+1])}else{tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])}
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
               tentative = jeu.getCase([jeu.getAxis(this.position)[0]-1,jeu.getAxis(this.position)[1]])
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
 
               tentative = jeu.getCase([jeu.getAxis(this.position)[0],jeu.getAxis(this.position)[1]+1])
-              if (tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
+              if ((jeu.casesAdjacentes(this.position).includes(tentative))&&tentative>=0&&tentative<jeu.terrain.length&&jeu.terrain[tentative]!="montagne"&&(jeu.board[tentative]==0||(jeu.tanières.includes(tentative)&&tentative==this.tanière)||(this.tanière!=jeu.board[tentative].tanière&&this.pousse(jeu.board[tentative],jeu)==true&&!jeu.tanières.includes(tentative)))){
                 this.deplacement(tentative,jeu);return;
               }
               return;
@@ -409,11 +418,10 @@ class Creature {
 
 tuer(jeu){
   if (this.position==this.tanière){
+    jeu.joueurs[jeu.tanières.indexOf(this.tanière)].creatures = jeu.joueurs[jeu.tanières.indexOf(this.tanière)].creatures.filter((elem)=>elem!=this);
     jeu.board[this.position]=jeu.board[this.position].filter((elem)=>elem!=this);
     return;
     }
-    jeu.joueurs[jeu.tanières.indexOf(this.tanière)].creatures = jeu.joueurs[jeu.tanières.indexOf(this.tanière)].creatures.filter((elem)=>elem!=this);
-    
   jeu.board[this.position]=0
   jeu.joueurs.forEach(element => {
     element.creatures = element.creatures.filter((elem)=>elem!=this);    

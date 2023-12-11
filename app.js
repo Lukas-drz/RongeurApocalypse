@@ -34,7 +34,7 @@ game.setNbJoueurs(nbJoueurs);
 game.setTours(10);
 var largeur=13;
 var longueur=13;
-positionTanieres = [Math.floor(longueur/2),Math.floor((largeur-1)*longueur+longueur/2),Math.floor(Math.floor(((largeur/2)))*longueur),Math.floor(Math.floor(((largeur/2)))*longueur+longueur-1)]
+positionTanieres = [Math.floor(longueur/2)+13,Math.floor(((largeur-1)*longueur+longueur/2))-13,Math.floor(Math.floor(((largeur/2)))*longueur+1),Math.floor(Math.floor(((largeur/2)))*longueur+longueur-2)]
 console.log("Position des tanières:"+positionTanieres)
 
 //Création de la partie
@@ -42,20 +42,20 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
 
   game.terrain = [];
   for (i=0;i<longueur*largeur;i++){proba = Math.random()*100;
-    if (proba<15){game.terrain.push("eau");}else{if (proba>65){game.terrain.push("plaine");}else{if (proba>57){game.terrain.push("montagne");}else{game.terrain.push("rocher");}}}}
+    if (proba<15){game.terrain.push("eau");}else{if (proba>65){game.terrain.push("plaine");}else{if (proba>60&&i%13!=0&&i%13!=12&&i/13!=0&&i/13!=12){game.terrain.push("montagne");}else{game.terrain.push("rocher");}}}}
 
     for (i=0;i<game.nbJoueurs;i++){
 
         game.terrain[positionTanieres[i]]=""+(i+1)
         game.board[positionTanieres[i]] = []
+      }
+      game.tanières = positionTanieres;
+      console.log("terrain généré")
+      console.log("Jeu vidé");
     }
-    game.tanières = positionTanieres;
-    console.log("terrain généré")
-    console.log("Jeu vidé");
-  }
-
-
-  function actualisation(){
+    
+    
+    function actualisation(){
   var jeusimplifié = [];
   for (i in game.joueurs){
   jeusimplifié[i] = [];
@@ -63,6 +63,7 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
     jeusimplifié[i].push(creature.position);
   }
   }
+    
     io.emit("actualisation",{"players":game.joueurs,"jeu":jeusimplifié,"jeucomplet":game})
  }
 
@@ -78,8 +79,8 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
         if (animal.cooldown>0){animal.cooldown--}
         
       }
-      actualisation();
-  });
+    });
+    actualisation();
 
   jeu.tourActuel++;
   console.log("Tour: "+jeu.tourActuel)
@@ -131,7 +132,10 @@ io.on('connection', (socket) => {
     game.board[positionTanieres[game.joueursConnectes]].push(male)
     game.board[positionTanieres[game.joueursConnectes]].push(femelle)  
     game.addJoueur(joueur)
-actualisation();
+    actualisation();
+
+  
+
   }
 
   //Le damier utilisé pour l'actuaisation côté client est calculé via les joueurs
