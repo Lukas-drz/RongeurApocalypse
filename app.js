@@ -67,12 +67,22 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
     io.emit("actualisation",{"players":game.joueurs,"jeu":jeusimplifié,"jeucomplet":game})
  }
 
- function tour(jeu) {
-  if (jeu.tourActuel == jeu.nbtours) {
-      console.log("fini");return true;
+
+ 
+ 
+ //Fonction qui gère le passage d'un tour
+ function tour(jeu) {//Avec du recul ça aurait été plus malin de mettre la fonction "tour" comme méthode de la classe game, à noter pour la prochaine fois
+  if (jeu.tourActuel >= jeu.nbtours) {
+    
+    var winner = jeu.getWinner();
+    actualisation();
+    io.emit('gameFinished',winner);
+
+      console.log("partie finie, gagnant: "+winner);
+      return;
   }
 
-  jeu.reproduction();
+  jeu.reproduction();//Gère la reproduction de toutes les équipes
   jeu.joueurs.forEach(player => {
       for (var animal of player.creatures) {
         animal.jouer(jeu);
@@ -84,6 +94,7 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
 
   jeu.tourActuel++;
   console.log("Tour: "+jeu.tourActuel)
+
   setTimeout(() => {
     actualisation();
       tour(jeu);
@@ -97,6 +108,7 @@ io.on('connection', (socket) => {
   socket.on('join',data=>{
     let joueur;
     if (game==null){
+      if (data.host==false){socket.emit("systeme","Veuillez attendre que la partie soit crée");return;}
       joueur = new Joueur(true,data.pseudo)
       initGame(joueur,data.nbJoueurs);
       let male = new Creature(data.tauxrepro,data.perception,data.force,"male",positionTanieres[0],positionTanieres[0])
@@ -153,8 +165,11 @@ io.on('connection', (socket) => {
     game.joueurs.forEach(element => {
       console.log(element);
     });
+
+
   if (game.nbJoueurs==game.joueursConnectes){
     console.log("démarrage de la partie")
+    io.emit("systeme","La partie commence !")
     tour(game)}
 });
 

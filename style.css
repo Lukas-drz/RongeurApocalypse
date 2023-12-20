@@ -70,6 +70,7 @@ input{
 #background{
     z-index:-1;
     width: 100%;
+    height: 100%;
     position:fixed;
     top:0
 }
@@ -79,4 +80,20 @@ input{
     position: fixed;
     margin-left: 10%;
     margin-top:15%;
+}
+
+
+.winner{
+    color:crimson;
+    background-color: aliceblue;
+    width: 50%;
+    text-align: center;
+    padding: 2%;
+    border:5px solid goldenrod;
+    border-radius: 105px;
+    margin-left: 25%;
+    margin-top:10%;
+    font-size: 400%;
+    font-family: "playfair display";
+    font-weight:bold;
 }

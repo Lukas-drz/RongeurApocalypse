@@ -233,7 +233,7 @@ window.addEventListener("load", (event) => {
   socket.on('loaded',data=>{
     host=data;
     if (host==true){
-        document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <input type="text" class="pannelText" id = "force" placeholder="force"> <input type="text" class="pannelText" id = "perception" placeholder="perception"> <input type="text" class="pannelText" id = "tauxrepro" placeholder="taux de reproduction"> </div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3> <input type="text" class="pannelText" id = "pseudo" placeholder="pseudonyme"> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Configuration de la partie</h3> <input type="text" class="pannelText" id = "nbJoueurs" placeholder="Nombre de joueurs (défaut 2)"> <input type="text" class="pannelText" id = "nbTours" placeholder="nombre de tours (défaut 15)"> </div>'
+        document.getElementById("pannel").innerHTML= '<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <input type="text" class="pannelText" id = "force" placeholder="force"> <input type="text" class="pannelText" id = "perception" placeholder="perception"> <input type="text" class="pannelText" id = "tauxrepro" placeholder="taux de reproduction"> </div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3> <input type="text" class="pannelText" id = "pseudo" placeholder="pseudonyme"> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Configuration de la partie</h3> <input type="text" class="pannelText" id = "nbJoueurs" placeholder="Nombre de joueurs (défaut 2)"> <input type="text" class="pannelText" id = "nbTours" placeholder="nombre de tours (défaut 30)"> </div>'
     }
     else{document.getElementById("pannel").innerHTML='<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <input type="text" class="pannelText" id = "force" placeholder="force"> <input type="text" class="pannelText" id = "perception" placeholder="perception"> <input type="text" class="pannelText" id = "tauxrepro" placeholder="taux de reproduction"> </div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3> <input type="text" class="pannelText" id = "pseudo" placeholder="pseudonyme"> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div>'
 }
@@ -258,7 +258,7 @@ function connection(){
     if (nbjoueurs>4){messageSysteme("Ce jeu n'accepte pas plus de 4 joueurs");return;}
     nbTours = parseInt(document.getElementById("nbTours").value)
     if (nbjoueurs==null||isNaN(nbjoueurs)){nbjoueurs=2}
-    if (nbTours==null||isNaN(nbTours)){nbTours=15}}
+    if (nbTours==null||isNaN(nbTours)){nbTours=30}}
 
     messageSysteme("Connection en cours.")
     informationsJoueur = {"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host}; 
@@ -309,3 +309,14 @@ socket.on("actualisation",data=>{
     remplirTanière(jeuDétaillé,largeurHexagones)
 })
 
+
+socket.on("systeme",data=>{
+    messageSysteme(data);
+})
+
+socket.on('gameFinished',data=>{
+    console.log("partie finie")
+    document.getElementById("gameRow").remove();
+    document.body.innerHTML+=`<h4 class="winner">`+data+`a gagné !</>`
+    messageSysteme(data+" a gagné");
+});

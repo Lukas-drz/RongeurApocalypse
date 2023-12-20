@@ -99,6 +99,29 @@ reproduction(){
 
 }
 
+
+
+getWinner(){
+    var trueTie = true;
+    for (var player of this.joueurs){
+        if (player.creatures.length>0){trueTie=false}
+    }
+    if (trueTie){return "Personne n'"}
+    var winner = this.joueurs[0];
+    for (var player of this.joueurs){
+        if (player.creatures.length>winner.creatures.length){
+            winner = player;
+        }
+        
+        if (player.getLastCreature()!=null && player.creatures.length==winner.creatures.length){
+            if (player.getLastCreature().dateOfBirth.getTime()>winner.getLastCreature().dateOfBirth.getTime()){
+                winner = player;
+            }
+        }
+
+    }
+    return winner.pseudo+" ";
+}
     
 
 }
