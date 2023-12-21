@@ -1,4 +1,4 @@
-Projet par Portes Elouand et Deronzier Lukas
+Projet par Portes Elouand et Deronzier Lukas | L2 informatique de la fds de montpellier 2023-2024 - projet de programmation WEB
 
 
 ![background](./background.gif)
