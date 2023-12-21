@@ -75,7 +75,7 @@ class Creature {
 
     if (this.hydration<=this.satiety){besoin = "eau"}
     else{besoin = "plaine"}
-    if ((jeu.terrain[this.position]==besoin)){this.cible=this.position;return;}
+    if ((jeu.terrain[this.position]==besoin||jeu.terrain[this.position]=="pasteque")){this.cible=this.position;return;}
 
 
     possiblePositions.push(this.position)
@@ -84,7 +84,7 @@ class Creature {
       var tablo = [];//pour éviter le bouclage infini
       for (let element of possiblePositions){
           for (let j of jeu.casesAdjacentes(element)){
-              if (((jeu.terrain[j]==besoin)&&(jeu.board[j]==0)||(((jeu.board[j].strength<this.strength&&(jeu.board[j].tanière!=this.tanière)))))){this.cible=j;return;}
+              if (((jeu.terrain[j]==besoin||jeu.terrain[j]=="pasteque")&&(jeu.board[j]==0)||(((jeu.board[j].strength<this.strength&&(jeu.board[j].tanière!=this.tanière)))))){this.cible=j;return;}
               if (!tablo.includes(j)&&(jeu.board[j]==0||jeu.tanières.includes(j)||(jeu.board[j].strength<this.strength&&(jeu.board[j].tanière!=this.tanière))))
               {tablo.push(j)
               };
@@ -433,8 +433,9 @@ jouer(jeu){
   if (this.isCreatureDead()==true){this.tuer(jeu);return;}
   
   this.findCible(jeu);
-  if (this.cible==this.position){  if (jeu.terrain[this.position]=="plaine"){this.addPrairie();}if (jeu.terrain[this.position]=="eau"){this.addWater()}this.coutArret();return}
+  if (this.cible==this.position){if (jeu.terrain[this.position]=="plaine"){this.addPrairie();}if (jeu.terrain[this.position]=="eau"){this.addWater()};if(jeu.terrain[this.position]=="pasteque"){this.addPrairie();this.addWater()};this.coutArret();return}
   this.versCible(jeu);
+  if(jeu.terrain[this.position]=="pasteque"){this.addPrairie();this.addWater()}
   if (jeu.terrain[this.position]=="plaine"){this.addPrairie();}
   if (jeu.terrain[this.position]=="eau"){this.addWater()}
   return;

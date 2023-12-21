@@ -8,6 +8,7 @@ const io = new require("socket.io")(server);
 const { Creature } = require('./Créature.js');
 const { Joueur } = require('./Joueur.js');
 const { Game } = require('./Game.js');
+const { Banane } = require('./banane.js');
 var game;
 var positionTanieres;
 
@@ -79,11 +80,24 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
     io.emit('gameFinished',winner);
 
       console.log("partie finie, gagnant: "+winner);
+
+      game = null;
+      positionTanieres = null;
+      haveHost = null;
+
       return;
+
   }
 
   jeu.reproduction();//Gère la reproduction de toutes les équipes
   jeu.joueurs.forEach(player => {
+    //Gestion pouvoir
+    if (player.cooldown>0){player.cooldown--;}
+      if (player.pouvoir=="banane"){
+        for (var banane of player.bananes){banane.tirer(game)}
+      }
+
+//Gestion animaux
       for (var animal of player.creatures) {
         animal.jouer(jeu);
         if (animal.cooldown>0){animal.cooldown--}
@@ -92,6 +106,7 @@ for (i=0;i<longueur*largeur;i++){game.board.push(0);}
     });
     actualisation();
 
+    
   jeu.tourActuel++;
   console.log("Tour: "+jeu.tourActuel)
 
@@ -108,8 +123,10 @@ io.on('connection', (socket) => {
   socket.on('join',data=>{
     let joueur;
     if (game==null){
-      if (data.host==false){socket.emit("systeme","Veuillez attendre que la partie soit crée");return;}
-      joueur = new Joueur(true,data.pseudo)
+      if (data.host==false){socket.emit("systeme","Veuillez attendre que la partie soit crée");return;}//Cas où l'host ne se connecte pas le premier
+      console.log("-----------------------------------------\ncreation partie par "+data.pseudo);
+      
+      joueur = new Joueur(true,data.pseudo,data.pouvoir)//Création de la partie selon l'hôte et ses paramètres
       initGame(joueur,data.nbJoueurs);
       let male = new Creature(data.tauxrepro,data.perception,data.force,"male",positionTanieres[0],positionTanieres[0])
       let femelle = new Creature(data.tauxrepro,data.perception,data.force,"female",positionTanieres[0],positionTanieres[0])
@@ -120,9 +137,8 @@ io.on('connection', (socket) => {
 
      
 
-      console.log("creation partie par "+data.pseudo);
       game.setTours(data.nbTours);
-      console.log("Max joueurs: "+data.nbJoueurs+"\nNombre de tours: "+data.nbTours);
+      console.log("Max joueurs: "+data.nbJoueurs+"\nNombre de tours: "+data.nbTours+"\n-----------------------------------------\n");
     }
 
     else {for (player of game.joueurs){if (player.pseudo==data.pseudo){
@@ -136,7 +152,7 @@ io.on('connection', (socket) => {
     }
 
     //Création du joueur-----
-    joueur=new Joueur(false,data.pseudo)
+    joueur=new Joueur(false,data.pseudo,data.pouvoir)
     let male = new Creature(data.tauxrepro,data.perception,data.force,"male",positionTanieres[game.joueursConnectes],positionTanieres[game.joueursConnectes])
     let femelle = new Creature(data.tauxrepro,data.perception,data.force,"female",positionTanieres[game.joueursConnectes],positionTanieres[game.joueursConnectes])
     joueur.addCreature(male)
@@ -175,6 +191,71 @@ io.on('connection', (socket) => {
 
   socket.on('unload',data=>{if(data==true){haveHost=false;console.log("hôte déconnecté.")}})
 
+
+ 
+  socket.on('pouvoirUtilise', data=>{ //Données reçues sous la forme  { "position": this.id.substring(1), "pseudo": informationsJoueur.pseudo}
+    if (game.tourActuel==0){socket.emit("systeme","La partie n'a pas encore commencé");return;}
+    let position = parseInt(data.position);
+    if (game.tanières.includes(position)){socket.emit("systeme","Impossible d'utiliser un pouvoir sur une tanière");return}
+
+      for (var joueur of game.joueurs){
+        if (joueur.pseudo==data.pseudo){
+          //On isole le joueur concerné
+          if (joueur.cooldown>0){socket.emit("systeme","Vous ne pouvez pas encore utiliser votre pouvoir !");return;}
+
+            if (joueur.pouvoir=="pasteque"){
+              game.terrain[position] = "pasteque"
+              joueur.cooldown = joueur.maxcooldown;
+              actualisation();
+            }
+          
+            if (joueur.pouvoir=="banane"){
+                let canplace = false;
+                if (game.board[position]!=1&&joueur.creatures.includes(game.board[position])){
+                  canplace = true;
+                }
+                for (var test of game.casesAdjacentes(position)){
+                  if (game.board[test]!=1&&joueur.creatures.includes(game.board[test])){
+                    canplace = true;
+                  }
+                }
+
+                if (canplace==false){socket.emit("systeme","Doit être placé près d'une de vos troupes");return;}
+
+
+                for (var test of game.joueurs){
+                  if (test.pouvoir=="banane"){
+                  for (var t2 of test.bananes){
+                      if (t2.position==position){
+                        socket.emit("systeme","Il y a déjà une banane sur cet hexagone");return;
+                      }
+                  }
+                  }
+                }
+            
+
+              joueur.bananes.push(new Banane(data.pseudo,position))
+              joueur.cooldown = joueur.maxcooldown;
+              actualisation();
+
+            }
+
+            
+            if (joueur.pouvoir=="coco"){
+              for (var test of game.casesAdjacentes(position)){if (game.tanières.includes(test)){socket.emit("systeme","Trop près d'une tanière !");return}}
+              game.coco(position)
+              joueur.cooldown = joueur.maxcooldown;
+              actualisation();
+            }
+
+
+
+        }
+      }
+
+
+  });
+                    
 
 });
 

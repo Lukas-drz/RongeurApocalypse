@@ -7,11 +7,16 @@ var host = false;
 var largeur=13;
 var longueur=13;
 
-//Test qui génère un tableau de jeu rapide, à enlever plus tard lorsuqu'on aura externalisé ça
 var jeu;
-var largeurHexagones = 27;
-var jeuDétaillé
-
+const largeurHexagones = 27;
+var jeuDétaillé;
+var idPouvoir;
+const nbPouvoirs = 3;//Nombre de pouvoirs, sert à faire cycler l'affichage. Peut changer avec les mises à jour du jeu.
+const nomsPouvoirs=["pasteque","banane","coco"]
+const textesPouvoirs = ["La pastèque permet de placer un hexagone qui donnera à la fois de la nourriture et de l'eau. C'est un pouvoir très utile pour contrer les aléas d'un point d'apparition difficile.",
+"Le canon-banane peut être placé sur un hexagone et tentera à chaque tour de tirer sur une créature ennemie assez proche. C'est un pouvoir très offensif.",
+"La noix de coco, une fois lâchée sur un hexagone, cause d'énormes dégâts aux hexagones adjacents ainsi que sur celui ciblé. L'hexagone ciblé devient infranchissable et les hexagones adjacents se remplissent d'eau de coco."
+];
 
 
 //-------------------Création Hexagone sous forme de tableau de points----------------------------------------
@@ -27,6 +32,7 @@ function creerHexagone(rayon) {
 }
 
 function créerDamier(nbLines, nbColumns, rayon) {
+    document.getElementById("jeu").style.visibility="visible";
     document.getElementById("jeu").innerHTML = "";
     Hexagone = creerHexagone(rayon);
 
@@ -63,8 +69,8 @@ function créerDamier(nbLines, nbColumns, rayon) {
                 .attr("fill", "aliceblue")
                 .attr("id", "h" + (l * nbLines + c))
                 .on("click", function (data) {
-                    socket.emit('coup', { "case": this.id, "pseudo": informationsJoueur.pseudo });
-                    console.log("Pouvoir utilisé sur l'hexagone " + this.id + " joué par le joueur " + informationsJoueur.pseudo);
+                    socket.emit('pouvoirUtilise', { "position": this.id.substring(1), "pseudo": informationsJoueur.pseudo});
+                    console.log("Pouvoir utilisé sur l'hexagone " + this.id.substring(1) + " joué par le joueur " + informationsJoueur.pseudo);
                 });
 
 
@@ -84,7 +90,7 @@ function fill(id,couleur){
 function actualiserDamier(longueur,largeur,jeu){
 for (i=0;i<longueur*largeur;i++){
     var color="aliceblue";
-if (jeu[i]=="eau"){color="blue";}
+if (jeu[i]=="eau"){color="DodgerBlue";}
 if (jeu[i]=="rocher"){color="darkgray"}
 if (jeu[i]=="montagne"){color="brown"}
 if (jeu[i]=="plaine"){color="lightgreen"}
@@ -92,6 +98,7 @@ if (jeu[i]=="1"){color="aliceblue"}
 if (jeu[i]=="2"){color="red"}
 if (jeu[i]=="3"){color="purple"}
 if (jeu[i]=="4"){color="pink"}
+if (jeu[i]=="pasteque"){color ="lightcoral"}
 
 fill(i,color)
 }
@@ -99,13 +106,52 @@ fill(i,color)
 
 
 //Actualisation des valeurs du damier
-function remplirDamier(longueur,largeur,jeu,rayon){
+function remplirDamier(longueur,largeur,jeu,jeuDétaillé,rayon){
     
     
         var imageUrl = "http://localhost:8888/fichier/player3.png";
         var svgJeu = d3.select("#jeu");
         svgJeu.selectAll(".hexagon-image").remove();
 
+
+ //Placement des bananes
+ for (var joueur of jeuDétaillé.joueurs){
+    if (joueur.pouvoir=="banane"){
+    for (var banane of joueur.bananes){
+    imageUrl = "http://localhost:8888/fichier/pouvoir1.png";
+
+
+    var hexagonElement = d3.select("#h" + banane.position);
+    var boundingBox = hexagonElement.node().getBBox();
+    var centreX = boundingBox.x + boundingBox.width / 2;
+    var centreY = boundingBox.y + boundingBox.height / 2;
+    svgJeu.append("image")
+        .attr("xlink:href", imageUrl)
+        .attr("x", centreX-(rayon*1.4)/2) 
+        .attr("y", centreY-(rayon*1.4)/2) 
+        .attr("width", rayon*1.4) 
+        .attr("height", rayon*1.4) 
+        .attr("class", "hexagon-image")
+        .attr("id", "b" + banane.position).on("mouseover",function(data){
+            var pos = this.id.substring(1);
+            var bananePointée
+            for (var joueur of jeuDétaillé.joueurs)
+            if (joueur.pouvoir=="banane"){{
+                for (var banane of joueur.bananes){
+                    if (banane.position==pos){
+                        bananePointée = banane;
+                    }
+                }
+            }}
+            
+            document.getElementById("afficheCase").innerHTML =  '<h3>Informations de la banane'+'</h3><h4>Tirs restants: '+bananePointée.tirsRestants+' | Cooldown: '+bananePointée.cooldown+'</h4><h4>Propriétaire: '+bananePointée.propriétaire+'</h4>'
+            
+        })
+    }
+}
+}
+
+    //Placement des créatures
     for (i in jeu){
         imageUrl = "http://localhost:8888/fichier/player"+i+".png";
 
@@ -133,10 +179,20 @@ function remplirDamier(longueur,largeur,jeu,rayon){
                 document.getElementById("afficheCase").innerHTML =  '<h3>Informations de '+jeuDétaillé.board[pos].nom+'</h3><h4>Faim: '+jeuDétaillé.board[pos].satiety+' | Soif: '+jeuDétaillé.board[pos].hydration+' | CD reproduction: '+jeuDétaillé.board[pos].cooldown+'</h4><h4>Cible: '+jeuDétaillé.board[pos].cible+' | Sexe: '+jeuDétaillé.board[pos].gender+'</h4>'
                 }
             })
+            .on("click", function (data) {
+                socket.emit('pouvoirUtilise', { "position": this.id.substring(1), "pseudo": informationsJoueur.pseudo});
+                console.log("Pouvoir utilisé sur l'hexagone " + this.id.substring(1) + " joué par le joueur " + informationsJoueur.pseudo);
+            });
         }
     }
 
+   
 }
+
+
+
+
+
 //Tanière
 
 
@@ -230,6 +286,8 @@ window.addEventListener("load", (event) => {
   });
   
   //----------Loading into the game----------------------------------------------------------------
+
+
   socket.on('loaded',data=>{
     host=data;
     if (host==true){
@@ -238,7 +296,35 @@ window.addEventListener("load", (event) => {
     else{document.getElementById("pannel").innerHTML='<div class="tiers"> <h3 class="pannelText">Vos statistiques</h3> <input type="text" class="pannelText" id = "force" placeholder="force"> <input type="text" class="pannelText" id = "perception" placeholder="perception"> <input type="text" class="pannelText" id = "tauxrepro" placeholder="taux de reproduction"> </div> <div class="tiers"> <h3 class="pannelText">Vos informations</h3> <input type="text" class="pannelText" id = "pseudo" placeholder="pseudonyme"> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div>'
 }
 
+idPouvoir=0;
+document.getElementById("pouvoirPannel").innerHTML =` <h3 class="pannelText">Pouvoir</h3>
+<div class="pouvoir">
+<p class="pouvoirBouton" onclick="previousPouvoir()">🠔</p> <img src="http://localhost:8888/fichier/pouvoir`+idPouvoir+`.png" id="pouvoir" class="pouvoirImage" ></img> <p class="pouvoirBouton" onclick="nextPouvoir()">🠖</p> 
+</div>
+<h3 type="text" class="pouvoirText" id = "pouvoirText" ">`+textesPouvoirs[idPouvoir]+`</h3>
+`
 })
+
+function nextPouvoir(){
+idPouvoir = (idPouvoir+1)%nbPouvoirs
+document.getElementById("pouvoirPannel").innerHTML = ` <h3 class="pannelText">Pouvoir</h3>
+<div class="pouvoir">
+<p class="pouvoirBouton" onclick="previousPouvoir()">🠔</p> <img src="http://localhost:8888/fichier/pouvoir`+idPouvoir+`.png" id="pouvoir" class="pouvoirImage" ></img> <p class="pouvoirBouton" onclick="nextPouvoir()">🠖</p> 
+</div>
+<h3 type="text" class="pouvoirText" id = "pouvoirText" ">`+textesPouvoirs[idPouvoir]+`</h3>
+`
+}
+function previousPouvoir(){
+    idPouvoir = (idPouvoir+nbPouvoirs-1)%nbPouvoirs
+    document.getElementById("pouvoirPannel").innerHTML = ` <h3 class="pannelText">Pouvoir</h3>
+    <div class="pouvoir">
+    <p class="pouvoirBouton" onclick="previousPouvoir()">🠔</p> <img src="http://localhost:8888/fichier/pouvoir`+idPouvoir+`.png" id="pouvoir" class="pouvoirImage" ></img> <p class="pouvoirBouton" onclick="nextPouvoir()">🠖</p> 
+    </div>
+    <h3 type="text" class="pouvoirText" id = "pouvoirText" ">`+textesPouvoirs[idPouvoir]+`</h3>
+    `
+    }
+
+
 
 //-------------Connection---------------------------------------------------------------------------------------------------
 function connection(){
@@ -261,8 +347,8 @@ function connection(){
     if (nbTours==null||isNaN(nbTours)){nbTours=30}}
 
     messageSysteme("Connection en cours.")
-    informationsJoueur = {"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host}; 
-    socket.emit('join',{"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host,"nbTours":nbTours,"nbJoueurs":nbjoueurs})
+    informationsJoueur = {"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host,"pouvoir":nomsPouvoirs[idPouvoir]}; 
+    socket.emit('join',{"pseudo":pseudo,"force":force,"perception":perception,"tauxrepro":tauxrepro,"host":host,"nbTours":nbTours,"nbJoueurs":nbjoueurs,"pouvoir":nomsPouvoirs[idPouvoir]})
 }
 
 socket.on('joined',data=>{
@@ -271,6 +357,7 @@ socket.on('joined',data=>{
 
 
     document.getElementById("playButton").remove();
+    document.getElementById("pouvoirPannel").remove();
     if (informationsJoueur.pseudo=="Ryan Gosling"){
         document.getElementById("background").src ="http://localhost:8888/fichier/gosling.gif"
     }
@@ -282,7 +369,7 @@ socket.on('joined',data=>{
     créerDamier(longueur,largeur,largeurHexagones)
     créerTanière(largeurHexagones)
     actualiserDamier(longueur,largeur,terrain);
-    remplirDamier(longueur,largeur,jeu,largeurHexagones);
+    remplirDamier(longueur,largeur,jeu,jeuDétaillé,largeurHexagones);
     remplirTanière(jeuDétaillé,largeurHexagones)
     document.getElementById("pannel").innerHTML= '<div class="tiers" id=stats> <h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p></div> <div class="tiers" id="middle"> <h3 class="pannelText">Vos informations</h3>  <h4 class="pannelText">Connecté en tant que '+informationsJoueur.pseudo+'</p> <h3 class="pannelText">Informations système</h3> <h4 id="systeme" class="pannelText"></h4> </div> <div class="tiers"> <h3 class="pannelText">Informations case</h3><div id="afficheCase"></div></div>'
   
@@ -294,18 +381,23 @@ window.addEventListener("beforeunload", (event) => {
   });
   
 
-socket.on("actualisation",data=>{
-     document.getElementById("stats").innerHTML = '<h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max</p>'
-
-
+  socket.on("actualisation",data=>{
     if (informationsJoueur==null){return;}
+    var cd;
+    for (var p of jeuDétaillé.joueurs){//Affichage du cooldown
+        if (p.pseudo == informationsJoueur.pseudo) {cd = p.cooldown}
+    }
+    document.getElementById("stats").innerHTML = '<h3 class="pannelText">Vos statistiques</h3> <p class="pannelText">Force: '+informationsJoueur.force+' | Perception: '+informationsJoueur.perception+' | Taux reproduction: '+informationsJoueur.tauxrepro+'</p><h3 class="pannelText">Informations de la partie</h3> <p class=pannelText>Tour courant: '+jeuDétaillé.tourActuel+' sur '+jeuDétaillé.nbtours+' max | Cooldown pouvoir: '+cd+' tours.</p>'
+    
+    
+    
+    jeu = data.jeu;
     players = data.players;
     jeuDétaillé = data.jeucomplet
     terrain = jeuDétaillé.terrain;
-    jeu = data.jeu;
     créerDamier(longueur,largeur,largeurHexagones)
     actualiserDamier(longueur,largeur,terrain);
-    remplirDamier(longueur,largeur,jeu,largeurHexagones);
+    remplirDamier(longueur,largeur,jeu,jeuDétaillé,largeurHexagones);
     remplirTanière(jeuDétaillé,largeurHexagones)
 })
 

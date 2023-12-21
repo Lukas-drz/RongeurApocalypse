@@ -28,18 +28,26 @@
             <h4 id="systeme" class="pannelText"></h4>
 
         </div>
+        
+
         <div class="tiers">
             <h3 class="pannelText">Configuration de la partie</h3>
             <input type="text" class="pannelText" id = "nbJoueurs" placeholder="Nombre de joueurs (défaut 2)">
             <input type="text" class="pannelText" id = "nbTours" placeholder="nombre de tours (défaut 30)">
         </div>
+        
     </div>
+
 
     <div class="row" id="gameRow">
         <button onclick="connection()" class = "playButton"id = "playButton"><img class="playButton" src="http://localhost:8888/fichier/play.png"></button>
         <svg id="jeu" width="1000" height="700"></svg>
         <svg id="tanière" width="150" height="500"></svg>
     </div>
+
+
+    <div class="pannelBas" id="pouvoirPannel">
+           </div>
     <img id="background" src="http://localhost:8888/fichier/background.gif">
 </body>
 </html>

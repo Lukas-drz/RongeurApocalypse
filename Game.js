@@ -70,7 +70,7 @@ class Game {
 
 reproduction(){
     var listeRepro;
-    for (i=0;i<this.nbJoueurs;i++){
+    for (var i=0;i<this.nbJoueurs;i++){
         listeRepro = this.board[this.tanières[i]];
         if (listeRepro.length<10&&(listeRepro!=[]||listeRepro!=undefined)){
         for (var animal of listeRepro){
@@ -123,6 +123,16 @@ getWinner(){
     return winner.pseudo+" ";
 }
     
+coco(position){
+    for (var test of this.casesAdjacentes(position)){
+        if (!this.tanières.includes(test)){
+        this.terrain[test]="eau";
+        if (this.board[test]!=0){this.board[test].tuer(this)};}
+    }
+
+    this.terrain[position]="montagne";
+    if (this.board[position]!=0){this.board[test].tuer(this)};
+}
 
 }
 module.exports = { Game };

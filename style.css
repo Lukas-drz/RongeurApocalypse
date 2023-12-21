@@ -1,30 +1,33 @@
 body{
     background-color: paleturquoise;
+    position:fixed;
 }
 
 #pannel{
+    position:fixed;
     display: flex;
     height : 150px;
 
 
     border-radius: 12px;
     z-index: 3;
-    margin-left: 0;
+    margin-left: 1px;
     width:100%;
     
 }
 .tiers{
     flex:1;
+    display:flex;
+    flex-direction: column;
     background-color: greenyellow;
     border: solid darkgreen 3px;
     border-radius: 12px;
-
     height: 100%;}
+
 
     .pannelText{
         text-align: center;
         color:darkgreen;
-        
         border-radius: 15px;
         font-family:Georgia, 'Times New Roman', Times, serif;
       padding: 5px;
@@ -41,8 +44,11 @@ body{
 #jeu{
     margin-left: 25%;
     z-index: 3;
-    margin-top:4%;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    margin-top:100px;
     position:fixed;
+    visibility:hidden;
 
 }
 
@@ -54,13 +60,19 @@ input{
 
 #gameRow{
     margin-left:0;
+    position:fixed;
+    overflow:scroll;
+    margin-top: 6%;
+    z-index: 14;
 }
 
 .playButton{
-    width: 30%;
+    position:fixed;
+    z-index: 15;
+    width: 15%;
+    margin-top:5%;
+    margin-left: 17%;
 
-    margin-left: 30%;
-    margin-top:10%;
     border: none;
     appearance: none;
     background-color: inherit;
@@ -83,16 +95,74 @@ input{
 }
 
 
+
+.pannelBas{
+    position:fixed;
+    height : 250px;
+    background-color: greenyellow;
+    border: solid darkgreen 3px;
+    border-radius: 12px;
+   
+
+    border-radius: 12px;
+    z-index: 5;
+    bottom: 0;
+    margin-left: 1px;
+    width:100%;
+    
+}
+
+.pouvoir{
+    display:flex;
+    align-items: center;
+   justify-content: center;
+    height: 50%;
+}
+.pouvoirBouton{
+    background-color: aliceblue;
+    cursor:pointer;
+    font-size: 300%;
+    font-weight: bold;
+    text-align: center;
+    width: 5%; 
+    box-sizing: border-box;
+    border:solid 9px black;
+    border-radius: 100%;
+    user-select: none;
+}
+.pouvoirImage{
+    
+    height: 100%;
+    padding:20px;
+}
+.pouvoirText{
+    position: fixed;
+    bottom:0px;
+    overflow-y:scroll;
+    height:13%;
+    width: 100%;
+     text-align: center;
+     color:darkgreen;
+     border:3px darkgreen solid;
+     
+      font-family:Georgia, 'Times New Roman', Times, serif;
+      padding: 15px;
+      margin: 0 auto;
+    
+
+}
 .winner{
     color:crimson;
     background-color: aliceblue;
     width: 50%;
     text-align: center;
-    padding: 2%;
+    padding: 1%;
     border:5px solid goldenrod;
     border-radius: 105px;
+    z-index: 0;
     margin-left: 25%;
-    margin-top:10%;
+    margin-top:25%;
+    position:fixed;
     font-size: 400%;
     font-family: "playfair display";
     font-weight:bold;
