@@ -1,7 +1,7 @@
 Projet par Portes Elouand et Deronzier Lukas
 
 
-./background.gif
+![background](./background.gif)
 
 Fonctionnalités implémentées:
 
