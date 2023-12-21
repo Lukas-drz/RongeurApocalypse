@@ -7,10 +7,14 @@ Fonctionnalités implémentées:
 
 Côté client:
 
--Création d'une partie sur le serveur avec des paramètres donnés par un hôte\n
+-Création d'une partie sur le serveur avec des paramètres donnés par un hôte\n 
+
 -Capacité à rejoindre une partie
+
 -Véritication des paramètres entrés pas le joueur avant envoi de la requête
+
 -Choix dynamique d'un pouvoir (parmi trois pour l'instant, plus à venir dans des mises à jour)
+
 -Actualisation de l'état de la game à chaque tour
 
 
