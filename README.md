@@ -2,7 +2,7 @@ Projet par Portes Elouand et Deronzier Lukas
 
 
 ![background](./background.gif)
-----------------------------------------------------------------------------------------------------------------------------------------
+
 Fonctionnalités implémentées:
 
 Côté client:
@@ -21,12 +21,19 @@ Côté client:
 Côté serveur: 
 
 -Création d'un terrain aléatoire
+
 -Prise en compte en temps réel de l'utilisation des pouvoirs
+
 -Création de couples d'animaux à la connection
+
 -Reproduction des animaux lorsque c'est possible
+
 -IA des animaux qui tentent d'atteindre une case selon si oui ou non ils peuvent la voir et en fonction de leur besoin courant (eau, nourriture ou tanière pour se reproduire)
+
 -Envoi des informations au client en temps réel
+
 -Combat entre animaux
+
 -Calcul du vainqueur à la fin de la partie
 
 
