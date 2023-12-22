@@ -127,7 +127,7 @@ coco(position){
     for (var test of this.casesAdjacentes(position)){
         if (!this.tanières.includes(test)){
         this.terrain[test]="eau";
-        if (this.board[test]!=0){this.board[test].tuer(this)};}
+        if (this.board[test]!=0 && this.board[test].position!=this.board[test].tanière){this.board[test].tuer(this)};}
     }
 
     this.terrain[position]="montagne";

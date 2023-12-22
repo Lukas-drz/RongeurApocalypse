@@ -40,6 +40,9 @@ body{
     color:crimson;
 }
 
+#afficheCase{
+    overflow: scroll;
+}
 
 #jeu{
     margin-left: 25%;
