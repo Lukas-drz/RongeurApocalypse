@@ -420,6 +420,7 @@ tuer(jeu){
   if (this.position==this.tanière){
     jeu.joueurs[jeu.tanières.indexOf(this.tanière)].creatures = jeu.joueurs[jeu.tanières.indexOf(this.tanière)].creatures.filter((elem)=>elem!=this);
     jeu.board[this.position]=jeu.board[this.position].filter((elem)=>elem!=this);
+    if (jeu.board[this.position]==null){jeu.board[this.position]=[]}
     return;
     }
   jeu.board[this.position]=0

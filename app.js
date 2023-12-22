@@ -186,6 +186,7 @@ io.on('connection', (socket) => {
   if (game.nbJoueurs==game.joueursConnectes){
     console.log("démarrage de la partie")
     io.emit("systeme","La partie commence !")
+
     tour(game)}
 });
 
